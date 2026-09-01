@@ -1,0 +1,101 @@
+# Netlify Configuration for South University Landing Page
+# https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  # Build command
+  command = "npm run build"
+  # Directory to publish (must be a directory, not a file)
+  publish = "public"
+  # Functions directory
+  functions = "netlify/functions"
+
+[build.environment]
+  # Node version for build
+  NODE_VERSION = "18.18.0"
+
+# Redirect rules
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# API endpoint for form submission
+[[redirects]]
+  from = "/api/submit-lead"
+  to = "/.netlify/functions/submit-lead"
+  status = 200
+
+# Health check endpoint
+[[redirects]]
+  from = "/api/health"
+  to = "/.netlify/functions/health"
+  status = 200
+
+# Deny direct access to sensitive files
+[[redirects]]
+  from = "/.env*"
+  to = "/404"
+  status = 404
+
+[[redirects]]
+  from = "/.git/*"
+  to = "/404"
+  status = 404
+
+[[redirects]]
+  from = "/config/*"
+  to = "/404"
+  status = 404
+
+# Custom headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Security headers
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    # CSP - Adjust as needed for your APIs
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net https://leadid-service.jornaya.com https://ps.trust-guard.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://back2learn-post.leadhoop.com https://back2learn-api.leadhoop.com https://www.google-analytics.com; font-src 'self' data:;"
+
+# Cache policy for static assets
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/styles/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+# Form submission settings
+[[context.production]]
+  # Production environment variables will be set in Netlify UI
+  # See NETLIFY_BUILD_SETTINGS.md for complete instructions
+
+[[context.deploy-preview]]
+  # Deploy preview environment
+  command = "npm run build"
+
+[[context.branch-deploy]]
+  # Branch deploy environment
+  command = "npm run build"
+
+# Scheduled functions for lead delivery (if using Netlify Functions)
+# Note: Requires Netlify Pro or higher
+# [[scheduled_functions]]
+#   function = "deliver-queued-leads"
+#   cron = "*/5 * * * *"  # Every 5 minutes

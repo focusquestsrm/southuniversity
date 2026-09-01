@@ -1,0 +1,854 @@
+/* ===================================
+   South University Landing Page
+   Responsive Design with Logo Display
+   =================================== */
+
+:root {
+    /* LaunchYourDegree Brand Colors */
+    --primary-blue: #003d7a;
+    --accent-gold: #d4a574;
+    --light-blue: #e8f0f7;
+    --text-dark: #1a1a1a;
+    --text-gray: #666;
+    --border-light: #ddd;
+    --success-green: #28a745;
+    --error-red: #dc3545;
+    --warning-orange: #ff9800;
+
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+
+    /* Typography */
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    --font-size-sm: 14px;
+    --font-size-base: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 20px;
+    --font-size-2xl: 28px;
+    --font-size-3xl: 36px;
+
+    /* Responsive Breakpoints */
+    --breakpoint-sm: 480px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    color: var(--text-dark);
+    background-color: #fff;
+}
+
+/* ===================================
+   Header & Logo Section
+   =================================== */
+header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, #002a55 100%);
+    color: white;
+    padding: var(--spacing-lg) var(--spacing-md);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    flex: 1;
+}
+
+.logo-wrapper {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: var(--spacing-sm);
+    border-radius: 4px;
+}
+
+.logo-wrapper img {
+    height: auto;
+    max-height: 50px;
+    width: auto;
+    display: block;
+}
+
+/* South University Logo */
+.logo-wrapper.south-university {
+    padding: var(--spacing-md);
+}
+
+.logo-wrapper.south-university img {
+    max-height: 60px;
+}
+
+/* LaunchYourDegree Logo */
+.logo-wrapper.launch-your-degree {
+    padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.logo-wrapper.launch-your-degree img {
+    max-height: 45px;
+}
+
+.logo-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.header-text {
+    flex: 1;
+}
+
+.header-text h1 {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--spacing-sm);
+    font-weight: 600;
+}
+
+.header-text p {
+    font-size: var(--font-size-sm);
+    opacity: 0.95;
+    max-width: 400px;
+}
+
+/* ===================================
+   Hero Section
+   =================================== */
+.hero {
+    background: linear-gradient(135deg, var(--light-blue) 0%, #f5f8fb 100%);
+    padding: var(--spacing-2xl) var(--spacing-md);
+    text-align: center;
+}
+
+.hero-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero h2 {
+    font-size: var(--font-size-3xl);
+    color: var(--primary-blue);
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+}
+
+.hero p {
+    font-size: var(--font-size-lg);
+    color: var(--text-gray);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.8;
+}
+
+.hero-cta {
+    font-size: var(--font-size-lg);
+    color: var(--accent-gold);
+    font-weight: 600;
+}
+
+/* ===================================
+   Main Container & Form Section
+   =================================== */
+.main-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--spacing-2xl) var(--spacing-md);
+}
+
+.form-wrapper {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: var(--spacing-2xl);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-title {
+    font-size: var(--font-size-2xl);
+    color: var(--primary-blue);
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+}
+
+.form-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--text-gray);
+    margin-bottom: var(--spacing-lg);
+}
+
+.progress-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xl);
+    gap: var(--spacing-md);
+}
+
+.progress-step {
+    flex: 1;
+    height: 4px;
+    background: var(--border-light);
+    border-radius: 2px;
+    transition: background 0.3s ease;
+}
+
+.progress-step.active {
+    background: var(--primary-blue);
+}
+
+.progress-step.completed {
+    background: var(--success-green);
+}
+
+/* ===================================
+   Form Styles
+   =================================== */
+.form-section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.form-section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-dark);
+    font-size: var(--font-size-sm);
+}
+
+label .required {
+    color: var(--error-red);
+    margin-left: 2px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(0, 61, 122, 0.1);
+}
+
+input[type="text"].error,
+input[type="email"].error,
+input[type="tel"].error,
+input[type="number"].error,
+select.error,
+textarea.error {
+    border-color: var(--error-red);
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+input[type="text"]:disabled,
+input[type="email"]:disabled,
+input[type="tel"]:disabled,
+input[type="number"]:disabled,
+select:disabled,
+textarea:disabled {
+    background-color: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    margin-right: var(--spacing-sm);
+    cursor: pointer;
+}
+
+.checkbox-group,
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.checkbox-item,
+.radio-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.checkbox-item input,
+.radio-item input {
+    margin: 0;
+    cursor: pointer;
+}
+
+.checkbox-item label,
+.radio-item label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: 400;
+}
+
+/* ===================================
+   Error Messages
+   =================================== */
+.error-message {
+    color: var(--error-red);
+    font-size: var(--font-size-sm);
+    margin-top: var(--spacing-sm);
+    display: none;
+}
+
+.error-message.show {
+    display: block;
+}
+
+.field-error {
+    color: var(--error-red);
+    font-size: var(--font-size-sm);
+    margin-top: 4px;
+}
+
+.form-error {
+    background-color: rgba(220, 53, 69, 0.1);
+    border: 1px solid var(--error-red);
+    color: var(--error-red);
+    padding: var(--spacing-md);
+    border-radius: 4px;
+    margin-bottom: var(--spacing-lg);
+    display: none;
+}
+
+.form-error.show {
+    display: block;
+}
+
+/* ===================================
+   Buttons
+   =================================== */
+.button-group {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+    justify-content: space-between;
+}
+
+button {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: none;
+    border-radius: 4px;
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-blue);
+    color: white;
+    flex: 1;
+    max-width: 200px;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #002a55;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 61, 122, 0.2);
+}
+
+.btn-primary:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-secondary {
+    background-color: var(--border-light);
+    color: var(--text-dark);
+    flex: 1;
+    max-width: 200px;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: #bbb;
+    transform: translateY(-2px);
+}
+
+.btn-secondary:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+/* Loading State */
+.btn-primary:disabled {
+    opacity: 0.7;
+}
+
+.btn-primary.loading::after {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-left: var(--spacing-sm);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===================================
+   Consent Section
+   =================================== */
+.consent-section {
+    background: var(--light-blue);
+    padding: var(--spacing-lg);
+    border-radius: 4px;
+    margin-top: var(--spacing-xl);
+    border-left: 4px solid var(--accent-gold);
+}
+
+.consent-section h3 {
+    font-size: var(--font-size-lg);
+    color: var(--primary-blue);
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+}
+
+.consent-disclaimer {
+    font-size: var(--font-size-sm);
+    color: var(--text-gray);
+    line-height: 1.8;
+    margin-bottom: var(--spacing-md);
+}
+
+.consent-disclaimer a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.consent-disclaimer a:hover {
+    text-decoration: underline;
+}
+
+/* ===================================
+   Confirmation Pages
+   =================================== */
+.confirmation-page,
+.error-page,
+.ineligible-page {
+    display: none;
+    text-align: center;
+    padding: var(--spacing-2xl) var(--spacing-md);
+}
+
+.confirmation-page.active,
+.error-page.active,
+.ineligible-page.active {
+    display: block;
+}
+
+.confirmation-icon,
+.error-icon,
+.ineligible-icon {
+    font-size: 64px;
+    margin-bottom: var(--spacing-lg);
+}
+
+.confirmation-icon {
+    color: var(--success-green);
+}
+
+.error-icon {
+    color: var(--error-red);
+}
+
+.ineligible-icon {
+    color: var(--warning-orange);
+}
+
+.confirmation-page h2,
+.error-page h2,
+.ineligible-page h2 {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--spacing-md);
+    color: var(--primary-blue);
+}
+
+.confirmation-page p,
+.error-page p,
+.ineligible-page p {
+    font-size: var(--font-size-lg);
+    color: var(--text-gray);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.8;
+}
+
+.next-steps {
+    background: var(--light-blue);
+    padding: var(--spacing-lg);
+    border-radius: 4px;
+    margin-bottom: var(--spacing-lg);
+    text-align: left;
+}
+
+.next-steps ol {
+    margin-left: var(--spacing-lg);
+    color: var(--text-gray);
+}
+
+.next-steps li {
+    margin-bottom: var(--spacing-md);
+}
+
+/* ===================================
+   Programs List
+   =================================== */
+.programs-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+}
+
+.program-item {
+    padding: var(--spacing-md);
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.program-item:hover {
+    border-color: var(--primary-blue);
+    background: var(--light-blue);
+}
+
+.program-item input[type="radio"] {
+    margin-right: var(--spacing-md);
+}
+
+.program-item label {
+    margin: 0;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* ===================================
+   Footer
+   =================================== */
+footer {
+    background: var(--text-dark);
+    color: white;
+    padding: var(--spacing-xl) var(--spacing-md);
+    text-align: center;
+    margin-top: var(--spacing-2xl);
+}
+
+footer a {
+    color: var(--accent-gold);
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.footer-disclaimer {
+    font-size: var(--font-size-sm);
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: var(--spacing-lg);
+}
+
+/* ===================================
+   Responsive Design
+   =================================== */
+
+/* Tablet (768px and up) */
+@media (min-width: 768px) {
+    :root {
+        --font-size-base: 16px;
+        --font-size-2xl: 32px;
+        --font-size-3xl: 42px;
+    }
+
+    header {
+        padding: var(--spacing-xl) var(--spacing-lg);
+    }
+
+    .header-container {
+        gap: var(--spacing-2xl);
+    }
+
+    .header-text h1 {
+        font-size: var(--font-size-2xl);
+    }
+
+    .form-wrapper {
+        padding: var(--spacing-2xl);
+    }
+
+    .button-group {
+        justify-content: flex-end;
+    }
+
+    .button-group .btn-secondary {
+        margin-right: auto;
+    }
+}
+
+/* Desktop (1024px and up) */
+@media (min-width: 1024px) {
+    :root {
+        --font-size-base: 16px;
+    }
+
+    .header-container {
+        gap: var(--spacing-2xl);
+    }
+
+    .logo-section {
+        gap: var(--spacing-2xl);
+    }
+
+    .header-text h1 {
+        font-size: 32px;
+    }
+
+    .hero h2 {
+        font-size: 48px;
+    }
+
+    .form-wrapper {
+        max-width: 700px;
+        padding: var(--spacing-2xl);
+    }
+}
+
+/* Mobile (under 480px) */
+@media (max-width: 480px) {
+    :root {
+        --spacing-lg: 16px;
+        --spacing-xl: 24px;
+        --font-size-2xl: 24px;
+        --font-size-3xl: 28px;
+    }
+
+    header {
+        padding: var(--spacing-md);
+    }
+
+    .header-container {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .logo-section {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        width: 100%;
+    }
+
+    .logo-divider {
+        display: none;
+    }
+
+    .header-text {
+        text-align: center;
+    }
+
+    .header-text h1 {
+        font-size: var(--font-size-xl);
+    }
+
+    .header-text p {
+        font-size: var(--font-size-sm);
+    }
+
+    .hero {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+
+    .hero h2 {
+        font-size: 24px;
+    }
+
+    .form-wrapper {
+        padding: var(--spacing-lg);
+        margin: var(--spacing-md);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .button-group {
+        flex-direction: column-reverse;
+        gap: var(--spacing-md);
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        max-width: 100%;
+    }
+
+    .consent-section {
+        padding: var(--spacing-md);
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+}
+
+/* Extra Small Devices (under 360px) */
+@media (max-width: 360px) {
+    :root {
+        --font-size-base: 14px;
+        --font-size-lg: 16px;
+        --font-size-xl: 18px;
+    }
+
+    .logo-wrapper img {
+        max-height: 40px;
+    }
+
+    .logo-wrapper.south-university img {
+        max-height: 45px;
+    }
+
+    header {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    .header-text h1 {
+        font-size: 18px;
+    }
+
+    .form-wrapper {
+        padding: var(--spacing-md);
+        margin: var(--spacing-sm);
+    }
+}
+
+/* Print Styles */
+@media print {
+    header,
+    footer,
+    .button-group {
+        display: none;
+    }
+
+    .form-wrapper {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+}
+
+/* Accessibility - High Contrast Mode */
+@media (prefers-contrast: more) {
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+        border-width: 2px;
+    }
+
+    .btn-primary:hover {
+        box-shadow: 0 0 0 3px white, 0 0 0 5px var(--primary-blue);
+    }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
