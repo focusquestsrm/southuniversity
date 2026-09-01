@@ -182,6 +182,96 @@ header {
     margin: 0 0 0 auto;
 }
 
+.content-container {
+    width: min(100% - 32px, 1120px);
+    margin: 0 auto;
+}
+
+.programs-section {
+    background: #f5f5f5;
+    padding: clamp(48px, 7vw, 88px) 0;
+}
+
+.programs-section h2,
+.support-section h2 {
+    color: var(--primary-blue);
+    font-size: clamp(30px, 3.5vw, 48px);
+    line-height: 1.15;
+    text-align: center;
+    margin-bottom: clamp(28px, 4vw, 48px);
+}
+
+.program-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.program-card {
+    background: white;
+    border: 1px solid rgba(0, 61, 122, 0.1);
+    border-radius: 8px;
+    padding: 24px;
+    min-height: 210px;
+    display: flex;
+    flex-direction: column;
+}
+
+.program-card h3 {
+    color: var(--primary-blue);
+    font-size: var(--font-size-lg);
+    line-height: 1.25;
+    margin-bottom: 12px;
+}
+
+.program-card p,
+.support-item p {
+    color: var(--text-gray);
+    font-size: var(--font-size-sm);
+    line-height: 1.55;
+}
+
+.program-link {
+    color: var(--primary-blue);
+    font-weight: 600;
+    margin-top: auto;
+    padding-top: 18px;
+    text-decoration: none;
+}
+
+.program-link:hover,
+.program-link:focus-visible {
+    text-decoration: underline;
+}
+
+.support-section {
+    background: white;
+    padding: clamp(48px, 7vw, 88px) 0;
+}
+
+.support-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px;
+}
+
+.support-item {
+    border-top: 3px solid var(--accent-gold);
+    padding-top: 18px;
+}
+
+.support-item span {
+    color: var(--accent-gold);
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+}
+
+.support-item h3 {
+    color: var(--primary-blue);
+    font-size: var(--font-size-xl);
+    margin: 10px 0 8px;
+}
+
 .form-title {
     font-size: var(--font-size-2xl);
     color: var(--primary-blue);
@@ -670,6 +760,10 @@ footer a:hover {
     .button-group .btn-secondary {
         margin-right: auto;
     }
+
+    .program-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 /* Desktop (1024px and up) */
@@ -787,6 +881,15 @@ footer a:hover {
     .footer-links {
         flex-direction: column;
         gap: var(--spacing-md);
+    }
+
+    .program-grid,
+    .support-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .program-card {
+        min-height: 0;
     }
 }
 

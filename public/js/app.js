@@ -42,6 +42,14 @@ function renderPageStructure() {
         return;
     }
 
+    const programCards = window.config.programs.map(program => `
+        <article class="program-card">
+            <h3>${program.name}</h3>
+            <p>${program.description}</p>
+            <a href="#leadForm" class="program-link" data-program-id="${program.id}">Explore program</a>
+        </article>
+    `).join('');
+
     app.innerHTML = `
         <!-- Header with Dual Logos -->
         <header>
@@ -434,6 +442,25 @@ function renderPageStructure() {
                 </div>
             </div>
         </main>
+
+        <!-- Supporting content follows the UMA page structure without UMA copy -->
+        <section class="programs-section" aria-labelledby="programs-heading">
+            <div class="content-container">
+                <h2 id="programs-heading">Explore South University Online Programs</h2>
+                <div class="program-grid">${programCards}</div>
+            </div>
+        </section>
+
+        <section class="support-section" aria-labelledby="support-heading">
+            <div class="content-container">
+                <h2 id="support-heading">Your Next Steps</h2>
+                <div class="support-grid">
+                    <div class="support-item"><span aria-hidden="true">01</span><h3>Review program options</h3><p>Compare the online bachelor's degree programs available through South University.</p></div>
+                    <div class="support-item"><span aria-hidden="true">02</span><h3>Complete the form</h3><p>Share your information and program interest so your application can be reviewed.</p></div>
+                    <div class="support-item"><span aria-hidden="true">03</span><h3>Discuss your options</h3><p>Continue with the next steps for the program you select.</p></div>
+                </div>
+            </div>
+        </section>
 
         <!-- Footer -->
         <footer>
