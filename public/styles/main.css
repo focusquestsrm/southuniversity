@@ -1,16 +1,16 @@
 :root {
-  --uma-navy: #0d3553;
-  --uma-navy-deep: #003057;
-  --uma-teal: #18eac4;
-  --uma-teal-bright: #22d6c3;
-  --uma-dark: #272727;
-  --uma-gray: #f5f5f5;
-  --uma-light-bg: #eef1f4;
-  --uma-border: #d9dde3;
-  --uma-text: #35506b;
-  --uma-white: #ffffff;
-  --uma-danger: #d92d20;
-  --uma-success: #1fcb65;
+  --south-navy: #0d3553;
+  --south-navy-deep: #003057;
+  --south-teal: #18eac4;
+  --south-teal-bright: #22d6c3;
+  --south-dark: #272727;
+  --south-gray: #f5f5f5;
+  --south-light-bg: #eef1f4;
+  --south-border: #d9dde3;
+  --south-text: #35506b;
+  --south-white: #ffffff;
+  --south-danger: #d92d20;
+  --south-success: #1fcb65;
   --field-shadow: 0 0.1rem 0.5rem rgba(13, 53, 83, 0.08);
 }
 
@@ -22,8 +22,8 @@ html,
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  color: var(--uma-dark);
-  background: var(--uma-white);
+  color: var(--south-dark);
+  background: var(--south-white);
   overflow-x: hidden;
 }
 
@@ -55,7 +55,7 @@ a:focus-visible {
 }
 
 .navbar {
-  background-color: var(--uma-white);
+  background-color: var(--south-white);
   border-bottom: 1px solid rgba(13, 53, 83, 0.1);
 }
 
@@ -70,25 +70,13 @@ a:focus-visible {
   object-fit: contain;
 }
 
-.navbar-brand img:first-of-type {
-  height: 58px;
-}
-
-.navbar-brand .publisher-logo {
-  height: 38px;
-  max-width: 180px;
-}
-
-.brand-divider {
-  height: 32px;
-  width: 1px;
-  background: rgba(13, 53, 83, 0.25);
-  margin: 0 1rem;
-}
+.navbar-brand img:first-of-type { height: 58px; }
+.navbar-brand .publisher-logo { height: 38px; max-width: 180px; }
+.brand-divider { height: 32px; width: 1px; background: rgba(13, 53, 83, 0.25); margin: 0 1rem; }
 
 .hero-shell {
-  background-color: var(--uma-navy-deep);
-  background-image: linear-gradient(90deg, rgba(0, 48, 87, 0.92) 0%, rgba(0, 48, 87, 0.72) 46%, rgba(0, 48, 87, 0.42) 100%), url('/images/south-university-hero.png');
+  background-color: var(--south-navy-deep);
+  background-image: linear-gradient(90deg, rgba(0, 48, 87, 0.9), rgba(0, 48, 87, 0.62)), url('/images/south-university-hero.png');
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -120,6 +108,30 @@ a:focus-visible {
   font-weight: 300;
 }
 
+.container { width: 100%; margin-right: auto; margin-left: auto; padding-right: 12px; padding-left: 12px; }
+.row { display: flex; flex-wrap: wrap; margin-right: -12px; margin-left: -12px; }
+.row > * { width: 100%; max-width: 100%; padding-right: 12px; padding-left: 12px; }
+.col-12 { flex: 0 0 auto; width: 100%; }
+.col-md-2, .col-md-4, .col-md-5, .col-md-6, .col-md-7 { flex: 0 0 auto; }
+.text-center { text-align: center !important; }
+.text-md-end { text-align: left; }
+.d-flex { display: flex !important; }
+.justify-content-between { justify-content: space-between !important; }
+.align-items-center { align-items: center !important; }
+.gap-3 { gap: 1rem !important; }
+.mt-1 { margin-top: .25rem !important; }
+.mt-3 { margin-top: 1rem !important; }
+.mt-4 { margin-top: 1.5rem !important; }
+.mb-2 { margin-bottom: .5rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-5 { margin-bottom: 3rem !important; }
+.p-0 { padding: 0 !important; }
+.text-decoration-none { text-decoration: none !important; }
+.btn-link { color: var(--south-navy-deep); background: transparent; border: 0; }
+.fw-bold { font-weight: 700 !important; }
+.fs-5 { font-size: 1.25rem !important; }
+.h4 { font-size: 1.5rem; }
+
 .form-card {
   background: rgba(255, 255, 255, 0.97);
   border: 1px solid rgba(13, 53, 83, 0.08);
@@ -136,13 +148,13 @@ a:focus-visible {
 }
 
 .form-card .badge-row svg {
-  color: var(--uma-success);
+  color: var(--south-success);
 }
 
 .form-label {
   display: block;
   font-weight: 600;
-  color: var(--uma-dark);
+  color: var(--south-dark);
   margin-bottom: 0.45rem;
 }
 
@@ -154,8 +166,8 @@ a:focus-visible {
   padding: 0.7rem 0.9rem;
   border: 1px solid rgba(13, 53, 83, 0.2);
   border-radius: 0.5rem;
-  background-color: var(--uma-white);
-  color: var(--uma-dark);
+  background-color: var(--south-white);
+  color: var(--south-dark);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
@@ -166,9 +178,9 @@ a:focus-visible {
 }
 
 .btn-primary {
-  background-color: var(--uma-teal);
-  color: var(--uma-navy-deep);
-  border: 1px solid var(--uma-teal);
+  background-color: var(--south-teal);
+  color: var(--south-navy-deep);
+  border: 1px solid var(--south-teal);
   border-radius: 0.5rem;
   padding: 0.85rem 1.35rem;
   font-weight: 700;
@@ -180,7 +192,7 @@ a:focus-visible {
 .btn-primary:focus-visible {
   background-color: #12d9b6;
   border-color: #12d9b6;
-  color: var(--uma-navy-deep);
+  color: var(--south-navy-deep);
 }
 
 .btn-primary:disabled {
@@ -220,11 +232,11 @@ a:focus-visible {
 .error-message,
 .field-status.is-error,
 .status-message.is-error {
-  color: var(--uma-danger);
+  color: var(--south-danger);
 }
 
 .status-message.is-success {
-  color: var(--uma-success);
+  color: var(--south-success);
 }
 
 .input-group {
@@ -242,7 +254,7 @@ a:focus-visible {
   border: 1px solid rgba(13, 53, 83, 0.2);
   border-right: none;
   border-radius: 0.5rem 0 0 0.5rem;
-  color: var(--uma-dark);
+  color: var(--south-dark);
 }
 
 .input-group .form-control {
@@ -251,7 +263,7 @@ a:focus-visible {
 
 h2.section-title {
   margin: 0;
-  color: var(--uma-dark);
+  color: var(--south-dark);
   font-size: clamp(2rem, 2.6vw, 3rem);
   line-height: 1.2;
   font-weight: 700;
@@ -266,17 +278,17 @@ h2.section-title {
   font-size: clamp(2rem, 3vw, 3.5rem);
   line-height: 1.15;
   font-weight: 700;
-  color: var(--uma-navy);
+  color: var(--south-navy);
   margin-bottom: 1.5rem;
 }
 
 .text-accent {
-  color: var(--uma-teal-bright);
+  color: var(--south-teal-bright);
 }
 
 .program-card {
-  background: var(--uma-white);
-  border: 1px solid var(--uma-border);
+  background: var(--south-white);
+  border: 1px solid var(--south-border);
   border-radius: 14px;
   padding: 2rem 1.5rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
@@ -287,13 +299,13 @@ h2.section-title {
 .program-card .program-icon {
   font-size: 2.6rem;
   line-height: 1;
-  color: var(--uma-teal-bright);
+  color: var(--south-teal-bright);
 }
 
 .program-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--uma-navy);
+  color: var(--south-navy);
   margin: 1rem 0 0.5rem;
 }
 
@@ -319,7 +331,7 @@ h2.section-title {
 .why-choose .feature h2 {
   font-size: clamp(1.25rem, 1.8vw, 1.8rem);
   line-height: 1.3;
-  color: var(--uma-dark);
+  color: var(--south-dark);
   margin-bottom: 0.8rem;
 }
 
@@ -328,12 +340,12 @@ h2.section-title {
   width: 50%;
   border: none;
   height: 4px;
-  background: var(--uma-teal);
+  background: var(--south-teal);
   opacity: 1;
 }
 
 .accreditation-band {
-  background-color: var(--uma-navy);
+  background-color: var(--south-navy);
   color: #f5f5f5;
   padding: 3rem 0;
 }
@@ -342,7 +354,7 @@ h2.section-title {
   font-size: clamp(1.2rem, 2vw, 2rem);
   line-height: 1.5;
   font-weight: 700;
-  color: var(--uma-teal);
+  color: var(--south-teal);
   text-align: center;
 }
 
@@ -356,32 +368,32 @@ h2.section-title {
 }
 
 .site-footer {
-  background-color: var(--uma-light-bg);
+  background-color: var(--south-light-bg);
   padding: 3rem 0;
 }
 
 .footer-text,
 .footer-copy,
 .footer-powered {
-  color: var(--uma-text);
+  color: var(--south-text);
   font-size: 1rem;
   line-height: 1.55;
 }
 
 .footer-copy {
   font-weight: 700;
-  color: var(--uma-navy);
+  color: var(--south-navy);
 }
 
 .footer-link,
 .footer-brand {
-  color: var(--uma-text);
+  color: var(--south-text);
   text-decoration: underline;
 }
 
 .footer-brand {
   font-weight: 700;
-  color: var(--uma-navy);
+  color: var(--south-navy);
 }
 
 .footer-divider {
@@ -420,13 +432,11 @@ h2.section-title {
     padding-bottom: 2rem;
   }
 
-  .hero-shell {
-    background-position: 66% center;
-  }
-
   .hero-copy {
     text-align: center;
   }
+
+  .hero-shell { background-position: 66% center; }
 
   .form-card {
     padding: 1.25rem 1rem;
@@ -439,6 +449,27 @@ h2.section-title {
   .accreditation-band .row > div {
     margin-bottom: 1.25rem;
   }
+}
+
+@media (min-width: 768px) {
+  .container { max-width: 720px; }
+  .col-md-2 { width: 16.66666667%; }
+  .col-md-4 { width: 33.33333333%; }
+  .col-md-5 { width: 41.66666667%; }
+  .col-md-6 { width: 50%; }
+  .col-md-7 { width: 58.33333333%; }
+  .text-md-end { text-align: right; }
+}
+
+@media (min-width: 992px) {
+  .container { max-width: 960px; }
+  .col-lg-3 { width: 25%; }
+  .col-lg-4 { width: 33.33333333%; }
+  .col-lg-7 { width: 58.33333333%; }
+  .col-lg-10 { width: 83.33333333%; }
+  .col-xl-9 { width: 75%; }
+  .col-lg-11 { width: 91.66666667%; }
+  .col-xl-10 { width: 83.33333333%; }
 }
 
 @media (prefers-reduced-motion: reduce) {

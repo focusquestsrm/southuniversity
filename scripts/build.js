@@ -137,9 +137,9 @@ if (fs.existsSync(htmlPath)) {
         { pattern: /<title>/, name: 'Title tag' },
         { pattern: /<meta name="viewport"/, name: 'Viewport meta' },
         { pattern: /id="leadform"/, name: 'Lead form' },
-        { pattern: /class="hero-shell"/, name: 'UMA hero structure' },
+        { pattern: /class="hero-shell"/, name: 'Hero structure' },
         { pattern: /class="form-card"/, name: 'Form card' },
-        { pattern: /src="\/js\/function2\.js"/, name: 'Form controller script' }
+        { pattern: /src="\/?js\/function2\.js"/, name: 'Form controller script' }
     ];
 
     checks.forEach(check => {
@@ -166,7 +166,7 @@ if (fs.existsSync(cssPath)) {
     const cssSize = Math.round(css.length / 1024);
     
     const cssChecks = [
-        { pattern: /--uma-navy/, name: 'Color variables' },
+        { pattern: /--south-navy/, name: 'Color variables' },
         { pattern: /.form-card/, name: 'Form card' },
         { pattern: /@media/, name: 'Responsive media queries' },
         { pattern: /.form-step/, name: 'Form steps' }

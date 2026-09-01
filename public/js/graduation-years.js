@@ -17,19 +17,9 @@
     return year >= MINIMUM_YEAR && year <= MAXIMUM_YEAR;
   }
 
-  function populateSelect(select) {
-    if (!select) return;
-    select.replaceChildren(new Option('Please Select', '', true, false));
-    select.options[0].disabled = true;
-    for (let year = MAXIMUM_YEAR; year >= MINIMUM_YEAR; year -= 1) {
-      select.add(new Option(String(year), String(year)));
-    }
-  }
-
   return Object.freeze({
     MINIMUM_YEAR,
     MAXIMUM_YEAR,
-    isValid,
-    populateSelect
+    isValid
   });
 });

@@ -127,8 +127,6 @@
     const checks = [
       ['lead_education_grad_year', 'Please select your graduation year.', 'grad-year-error'],
       ['lead_education_education_level_id', 'Please select your highest level of education.', 'education-error'],
-      ['lead_background_military_type', 'Please select your military service status.', null],
-      ['lead_education_start_date', 'Please select when you are ready to start.', null],
       ['lead_address_address_visible', 'Please enter your street address.', 'addressValidationMessage'],
       ['lead_address_city', 'Please enter your city.', null],
       ['lead_address_state', 'Please select your state.', null],
@@ -146,14 +144,6 @@
         return false;
       }
       if (check[2]) setError(check[2], '');
-    }
-    const state = String(document.getElementById('lead_address_state').value || '').toUpperCase();
-    const program = String(document.getElementById('lead_education_program_id').value || '');
-    const unavailableStates = ['CT', 'MA', 'MS', 'NY', 'OR', 'RI', 'DC', 'AA', 'AE', 'AP', 'PR', 'VI', 'AS', 'GU', 'MP'];
-    const restrictedPrograms = { '114283': ['CA'], '114284': ['NJ'], '114286': ['NJ'], '114266': ['NJ'], '114273': ['NJ'], '114268': ['NJ'] };
-    if (unavailableStates.includes(state) || (restrictedPrograms[program] || []).includes(state)) {
-      setError('addressValidationMessage', 'This program is not available in the selected state.');
-      return false;
     }
     return true;
   }
@@ -273,7 +263,6 @@
     }
     captureAttribution();
     setAddressValue();
-    if (window.SOUTH_GRADUATION_YEARS) window.SOUTH_GRADUATION_YEARS.populateSelect(document.getElementById('lead_education_grad_year'));
     wireNavigation();
     updateStep(1);
     await hydrateProgramSelection();
