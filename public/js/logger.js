@@ -3,6 +3,8 @@
  * Handles application logging without exposing PII or credentials
  */
 
+const loggerEnv = window.__ENV || {};
+
 window.logger = (() => {
     const LOG_LEVELS = {
         DEBUG: 0,
@@ -11,7 +13,7 @@ window.logger = (() => {
         ERROR: 3
     };
 
-    const currentLevel = process.env.NODE_ENV === 'production' ? LOG_LEVELS.WARN : LOG_LEVELS.DEBUG;
+    const currentLevel = loggerEnv.NODE_ENV === 'production' ? LOG_LEVELS.WARN : LOG_LEVELS.DEBUG;
 
     /**
      * Format log message
@@ -67,7 +69,7 @@ window.logger = (() => {
      * Send log to server (if endpoint configured)
      */
     function sendToServer(level, message, data) {
-        if (process.env.NODE_ENV === 'production' && level >= LOG_LEVELS.WARN) {
+        if (loggerEnv.NODE_ENV === 'production' && level >= LOG_LEVELS.WARN) {
             // In production, optionally send warnings and errors to server
             // This would require a server-side logging endpoint
             // For now, we only log to console

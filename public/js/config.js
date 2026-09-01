@@ -3,6 +3,8 @@
  * Centralized configuration for the South University landing page
  */
 
+const configEnv = window.__ENV || {};
+
 window.config = {
     // Campaign Information
     campaign: {
@@ -23,19 +25,19 @@ window.config = {
 
     // API Endpoints
     api: {
-        pingUrl: process.env.LEADHOOP_PING_URL || 'http://back2learn-api.leadhoop.com/v1/pings',
-        postUrl: process.env.LEADHOOP_POST_URL || 'http://back2learn-post.leadhoop.com/incoming/leads'
+        pingUrl: configEnv.LEADHOOP_PING_URL || 'http://back2learn-api.leadhoop.com/v1/pings',
+        postUrl: configEnv.LEADHOOP_POST_URL || 'http://back2learn-post.leadhoop.com/incoming/leads'
     },
 
     // Feature Flags
     features: {
-        enableLeadSubmission: process.env.LEAD_SUBMISSION_ENABLED === 'true' || false,
-        testMode: process.env.LEAD_TEST_MODE === 'true' || true,
-        enableGoogleAutocomplete: Boolean(process.env.GOOGLE_MAPS_BROWSER_KEY),
-        enableJornaya: Boolean(process.env.JORNAYA_CAMPAIGN_ID),
-        enableTrustedForm: Boolean(process.env.TRUSTEDFORM_KEY),
-        enableMetaPixel: Boolean(process.env.META_PIXEL_ID),
-        enableGoogleAnalytics: Boolean(process.env.GOOGLE_ANALYTICS_ID)
+        enableLeadSubmission: configEnv.LEAD_SUBMISSION_ENABLED === 'true' || false,
+        testMode: configEnv.LEAD_TEST_MODE === 'true' || true,
+        enableGoogleAutocomplete: Boolean(configEnv.GOOGLE_MAPS_BROWSER_KEY),
+        enableJornaya: Boolean(configEnv.JORNAYA_CAMPAIGN_ID),
+        enableTrustedForm: Boolean(configEnv.TRUSTEDFORM_KEY),
+        enableMetaPixel: Boolean(configEnv.META_PIXEL_ID),
+        enableGoogleAnalytics: Boolean(configEnv.GOOGLE_ANALYTICS_ID)
     },
 
     // Programs (Active Online Bachelor's Only)
@@ -210,27 +212,27 @@ window.config = {
 
     // External Service Placeholders
     services: {
-        googleMapsKey: process.env.GOOGLE_MAPS_BROWSER_KEY || '[PLACEHOLDER: GOOGLE_MAPS_BROWSER_KEY]',
-        metaPixelId: process.env.META_PIXEL_ID || '[PLACEHOLDER: META_PIXEL_ID]',
-        googleAnalyticsId: process.env.GOOGLE_ANALYTICS_ID || '[PLACEHOLDER: GOOGLE_ANALYTICS_ID]',
-        jornayaCampaignId: process.env.JORNAYA_CAMPAIGN_ID || '[PLACEHOLDER: JORNAYA_CAMPAIGN_ID]',
-        trustedFormKey: process.env.TRUSTEDFORM_KEY || '[PLACEHOLDER: TRUSTEDFORM_KEY]',
-        emailValidationService: process.env.EMAIL_VALIDATION_SERVICE || '[PLACEHOLDER: EMAIL_VALIDATION_SERVICE]'
+        googleMapsKey: configEnv.GOOGLE_MAPS_BROWSER_KEY || '[PLACEHOLDER: GOOGLE_MAPS_BROWSER_KEY]',
+        metaPixelId: configEnv.META_PIXEL_ID || '[PLACEHOLDER: META_PIXEL_ID]',
+        googleAnalyticsId: configEnv.GOOGLE_ANALYTICS_ID || '[PLACEHOLDER: GOOGLE_ANALYTICS_ID]',
+        jornayaCampaignId: configEnv.JORNAYA_CAMPAIGN_ID || '[PLACEHOLDER: JORNAYA_CAMPAIGN_ID]',
+        trustedFormKey: configEnv.TRUSTEDFORM_KEY || '[PLACEHOLDER: TRUSTEDFORM_KEY]',
+        emailValidationService: configEnv.EMAIL_VALIDATION_SERVICE || '[PLACEHOLDER: EMAIL_VALIDATION_SERVICE]'
     },
 
     // Consent Placeholders
     consent: {
         tcpaLanguagePlaceholder: '[PLACEHOLDER: APPROVED TCPA CONSENT LANGUAGE]',
-        privacyPolicyUrl: process.env.PRIVACY_POLICY_URL || '[PLACEHOLDER: PRIVACY_POLICY_URL]',
-        termsConditionsUrl: process.env.TERMS_CONDITIONS_URL || '[PLACEHOLDER: TERMS_CONDITIONS_URL]',
+        privacyPolicyUrl: configEnv.PRIVACY_POLICY_URL || '[PLACEHOLDER: PRIVACY_POLICY_URL]',
+        termsConditionsUrl: configEnv.TERMS_CONDITIONS_URL || '[PLACEHOLDER: TERMS_CONDITIONS_URL]',
         advertisingDisclosure: '[PLACEHOLDER: ADVERTISING_DISCLOSURE]',
         accreditationDisclaimers: '[PLACEHOLDER: ACCREDITATION_AND_PROGRAM_DISCLAIMERS]'
     },
 
     // Redirect URLs
     redirects: {
-        successUrl: process.env.ACCEPTED_REDIRECT_URL || '/thank-you',
-        failureUrl: process.env.FAILED_REDIRECT_URL || '/next-steps'
+        successUrl: configEnv.ACCEPTED_REDIRECT_URL || '/thank-you',
+        failureUrl: configEnv.FAILED_REDIRECT_URL || '/next-steps'
     },
 
     /**
