@@ -62,7 +62,7 @@ function renderPageStructure() {
                     <!-- LaunchYourDegree Logo -->
                     <div class="logo-wrapper launch-your-degree" title="Powered by LaunchYourDegree">
                         <img 
-                            src="/images/launch-your-degree-logo.png"
+                            src="/images/launch-your-degree-vertical-logo.png"
                             alt="LaunchYourDegree" 
                             class="logo-launch-your-degree"
                         >
