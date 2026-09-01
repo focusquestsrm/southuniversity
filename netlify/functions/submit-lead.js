@@ -33,7 +33,7 @@ exports.handler = async function handler(event) {
   if (!/^\d{10}$/.test(String(lead['lead[phone1]'] || '').replace(/\D/g, ''))) {
     return response(400, { error: 'A valid phone number is required.' });
   }
-  if (lead['lead_consent[tcpa_consent]'] !== 'Y') {
+  if (lead['lead_consent[tcpa_consent]'] !== '1') {
     return response(400, { error: 'Consent is required.' });
   }
   const unavailableStates = ['CT', 'MA', 'MS', 'NY', 'OR', 'RI', 'DC', 'AA', 'AE', 'AP', 'PR', 'VI', 'AS', 'GU', 'MP'];

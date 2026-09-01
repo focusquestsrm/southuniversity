@@ -44,6 +44,7 @@ const requiredFiles = [
     'netlify/functions/submit-lead.js',
     'public/images/south-university-logo.png',
     'public/images/launch-your-degree-logo.png',
+    'public/images/south-university-hero-flipped.png',
     'package.json',
     'netlify.toml',
     '.env.example'
