@@ -58,7 +58,7 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
     # CSP - Adjust as needed for your APIs
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://api.trustedform.com https://connect.facebook.net https://leadid-service.jornaya.com https://ps.trust-guard.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.trustedform.com https://back2learn-post.leadhoop.com https://back2learn-api.leadhoop.com https://www.google-analytics.com; font-src 'self' data:;"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://api.trustedform.com https://cdn.trustedform.com https://connect.facebook.net https://leadid-service.jornaya.com https://ps.trust-guard.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.trustedform.com https://cdn.trustedform.com https://back2learn-post.leadhoop.com https://back2learn-api.leadhoop.com https://www.google-analytics.com; font-src 'self' data:;"
 
 # Cache policy for static assets
 [[headers]]
