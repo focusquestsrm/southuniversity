@@ -144,7 +144,7 @@ All available information has been implemented with appropriate placeholders. Th
   - Quality: Preserved with no distortion or recoloring
 
 - LaunchYourDegree vertical logo
-  - File: `public/images/launch-your-degree-vertical-logo.png`
+  - File: `public/images/launch-your-degree-logo.png`
   - Status: Integrated alongside South University logo
   - Display: Both logos visible in header with visual divider
   - Responsive: Yes, adapts layout for mobile

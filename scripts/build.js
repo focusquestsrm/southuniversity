@@ -43,7 +43,7 @@ const requiredFiles = [
     'public/js/tracking.js',
     'public/js/form.js',
     'public/images/south-university-logo.png',
-    'public/images/launch-your-degree-vertical-logo.png',
+    'public/images/launch-your-degree-logo.png',
     'package.json',
     'netlify.toml',
     '.env.example'
@@ -73,7 +73,7 @@ const logoFiles = [
         name: 'South University Logo'
     },
     {
-        path: 'public/images/launch-your-degree-vertical-logo.png',
+        path: 'public/images/launch-your-degree-logo.png',
         name: 'LaunchYourDegree Logo'
     }
 ];

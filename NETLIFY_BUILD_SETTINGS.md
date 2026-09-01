@@ -64,6 +64,10 @@ LEADHOOP_CAMPUS_ID = 11776
 LEADHOOP_MEDIA_TYPE = noncallcenter
 LEADHOOP_POST_URL = http://back2learn-post.leadhoop.com/incoming/leads
 LEADHOOP_PING_URL = http://back2learn-api.leadhoop.com/v1/pings
+
+# Browser API restrictions
+# Google Maps browser key HTTP referrer origin:
+# https://southuniversity-landing-page.netlify.app
 ```
 
 #### Google APIs

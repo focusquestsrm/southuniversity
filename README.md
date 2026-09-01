@@ -129,7 +129,7 @@ public/
 │   └── form.js            # Multi-step form handling
 ├── images/
 │   ├── south-university-logo.png          # Approved South University logo
-│   ├── launch-your-degree-vertical-logo.png  # LaunchYourDegree logo
+│   ├── launch-your-degree-logo.png           # LaunchYourDegree logo
 │   └── favicon.ico        # Placeholder favicon
 ├── thank-you/
 │   └── index.html         # Success confirmation page
