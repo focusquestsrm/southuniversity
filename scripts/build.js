@@ -36,12 +36,12 @@ console.log(`${BLUE}→ Verifying project structure...${RESET}`);
 const requiredFiles = [
     'public/index.html',
     'public/styles/main.css',
-    'public/js/app.js',
-    'public/js/config.js',
-    'public/js/logger.js',
-    'public/js/validation.js',
-    'public/js/tracking.js',
-    'public/js/form.js',
+    'public/js/function2.js',
+    'public/js/program-availability.js',
+    'public/js/google-places.js',
+    'public/js/graduation-years.js',
+    'public/js/runtime-config.js',
+    'netlify/functions/submit-lead.js',
     'public/images/south-university-logo.png',
     'public/images/launch-your-degree-logo.png',
     'package.json',
@@ -101,10 +101,9 @@ const credentialPatterns = [
 
 let credentialsFound = 0;
 const filesToScan = [
-    'public/js/config.js',
-    'public/js/form.js',
-    'public/js/app.js',
-    'public/js/tracking.js'
+    'public/js/function2.js',
+    'public/js/program-availability.js',
+    'public/js/google-places.js'
 ];
 
 filesToScan.forEach(file => {
@@ -137,10 +136,10 @@ if (fs.existsSync(htmlPath)) {
     const checks = [
         { pattern: /<title>/, name: 'Title tag' },
         { pattern: /<meta name="viewport"/, name: 'Viewport meta' },
-        { pattern: /<div id="app"><\/div>/, name: 'App container' },
-        { pattern: /id="google-places-script"/, name: 'Google Places script' },
-        { pattern: /src="\/js\/app\.js(?:\?[^\"]*)?"/, name: 'App.js script' },
-        { pattern: /src="\/js\/config\.js(?:\?[^\"]*)?"/, name: 'Config.js script' }
+        { pattern: /id="leadform"/, name: 'Lead form' },
+        { pattern: /class="hero-shell"/, name: 'UMA hero structure' },
+        { pattern: /class="form-card"/, name: 'Form card' },
+        { pattern: /src="\/js\/function2\.js"/, name: 'Form controller script' }
     ];
 
     checks.forEach(check => {
@@ -167,10 +166,10 @@ if (fs.existsSync(cssPath)) {
     const cssSize = Math.round(css.length / 1024);
     
     const cssChecks = [
-        { pattern: /--primary-blue/, name: 'Color variables' },
-        { pattern: /.form-wrapper/, name: 'Form wrapper' },
+        { pattern: /--uma-navy/, name: 'Color variables' },
+        { pattern: /.form-card/, name: 'Form card' },
         { pattern: /@media/, name: 'Responsive media queries' },
-        { pattern: /.progress-indicator/, name: 'Progress indicator' }
+        { pattern: /.form-step/, name: 'Form steps' }
     ];
 
     let cssValid = true;
@@ -195,11 +194,11 @@ console.log();
 // Task 7: Verify JavaScript modules
 console.log(`${BLUE}→ Verifying JavaScript modules...${RESET}`);
 const jsModules = [
-    { file: 'public/js/config.js', name: 'Config', requires: ['window.config', 'programs', 'campaign'] },
-    { file: 'public/js/logger.js', name: 'Logger', requires: ['window.logger', 'debug', 'error'] },
-    { file: 'public/js/validation.js', name: 'Validation', requires: ['window.Validation', 'validateStep1'] },
-    { file: 'public/js/tracking.js', name: 'Tracking', requires: ['window.Tracking', 'buildLeadObject'] },
-    { file: 'public/js/form.js', name: 'Form', requires: ['window.Form', 'initialize'] }
+    { file: 'public/js/function2.js', name: 'Form controller', requires: ['data-next-step', 'validateStepOne', 'validateStepThree'] },
+    { file: 'public/js/program-availability.js', name: 'South programs', requires: ['114281', '114268', 'populateSelect'] },
+    { file: 'public/js/google-places.js', name: 'Google Places', requires: ['initializePlaces', 'address-populated'] },
+    { file: 'public/js/graduation-years.js', name: 'Graduation years', requires: ['isValid', 'MINIMUM_YEAR'] },
+    { file: 'public/js/runtime-config.js', name: 'Runtime config', requires: ['SOUTH_RUNTIME_CONFIG'] }
 ];
 
 jsModules.forEach(module => {
