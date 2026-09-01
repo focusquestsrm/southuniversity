@@ -263,6 +263,9 @@
     }
     captureAttribution();
     setAddressValue();
+    if (window.SOUTH_GRADUATION_YEARS) {
+      window.SOUTH_GRADUATION_YEARS.populateSelect(document.getElementById('lead_education_grad_year'));
+    }
     wireNavigation();
     updateStep(1);
     await hydrateProgramSelection();
