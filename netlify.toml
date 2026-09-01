@@ -82,15 +82,15 @@
     Cache-Control = "public, max-age=3600, must-revalidate"
 
 # Form submission settings
-[[context.production]]
+[context.production]
   # Production environment variables will be set in Netlify UI
   # See NETLIFY_BUILD_SETTINGS.md for complete instructions
 
-[[context.deploy-preview]]
+[context.deploy-preview]
   # Deploy preview environment
   command = "npm run build"
 
-[[context.branch-deploy]]
+[context.branch-deploy]
   # Branch deploy environment
   command = "npm run build"
 
