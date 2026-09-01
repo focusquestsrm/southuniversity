@@ -46,7 +46,7 @@ function renderPageStructure() {
         <!-- Header with Dual Logos -->
         <header>
             <div class="header-container">
-                <div class="logo-section">
+                <div class="logo-section" aria-label="South University and LaunchYourDegree">
                     <!-- South University Logo -->
                     <div class="logo-wrapper south-university" title="South University Online">
                         <img 
@@ -62,30 +62,21 @@ function renderPageStructure() {
                     <!-- LaunchYourDegree Logo -->
                     <div class="logo-wrapper launch-your-degree" title="Powered by LaunchYourDegree">
                         <img 
-                            src="/images/launch-your-degree-vertical-logo.png" 
+                            src="/images/launch-your-degree-logo.png"
                             alt="LaunchYourDegree" 
                             class="logo-launch-your-degree"
                         >
                     </div>
                 </div>
 
-                <!-- Header Text -->
-                <div class="header-text">
-                    <h1>South University Online</h1>
-                    <p>Advance your career with flexible, accredited bachelor's degrees</p>
-                </div>
             </div>
         </header>
 
         <!-- Hero Section -->
         <section class="hero">
             <div class="hero-container">
-                <h2>Earn Your Degree, On Your Terms</h2>
-                <p>
-                    South University Online offers accredited bachelor's degree programs designed 
-                    for working adults. Learn from anywhere, progress at your own pace.
-                </p>
-                <p class="hero-cta">Complete the form below to get started →</p>
+                <h1>South University Online</h1>
+                <p>Advance your career with a flexible online bachelor's degree.</p>
             </div>
         </section>
 
