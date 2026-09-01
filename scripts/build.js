@@ -139,8 +139,8 @@ if (fs.existsSync(htmlPath)) {
         { pattern: /<meta name="viewport"/, name: 'Viewport meta' },
         { pattern: /<div id="app"><\/div>/, name: 'App container' },
         { pattern: /id="google-places-script"/, name: 'Google Places script' },
-        { pattern: /src="\/js\/app.js"/, name: 'App.js script' },
-        { pattern: /src="\/js\/config.js"/, name: 'Config.js script' }
+        { pattern: /src="\/js\/app\.js(?:\?[^\"]*)?"/, name: 'App.js script' },
+        { pattern: /src="\/js\/config\.js(?:\?[^\"]*)?"/, name: 'Config.js script' }
     ];
 
     checks.forEach(check => {
