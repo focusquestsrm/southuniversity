@@ -2,6 +2,9 @@
 
 This document provides exact configuration steps for setting up the project in Netlify after the repository is pushed to GitHub.
 
+- **Netlify project identifier**: `focusquestsrm/southuniversity-landing-page.netlify.app`
+- **Permanent production URL**: `https://southuniversity-landing-page.netlify.app`
+
 ---
 
 ## Prerequisites

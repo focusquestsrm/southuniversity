@@ -210,6 +210,9 @@ All LeadHoop required fields are included:
 
 ## Deployment
 
+Netlify project identifier: `focusquestsrm/southuniversity-landing-page.netlify.app`  
+Permanent production URL: https://southuniversity-landing-page.netlify.app
+
 ### Netlify
 ```bash
 # Push to GitHub (main branch auto-deploys)
