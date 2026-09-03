@@ -7,7 +7,61 @@
   const endpoint = '/.netlify/functions/submit-lead';
   let submissionInProgress = false;
   let submissionHandled = false;
+  let submissionId = '';
+  const pendingStorageKey = 'southLeadSubmissionState';
+  const pendingRetentionMs = 24 * 60 * 60 * 1000;
   const genericError = 'We’re unable to process your request at this time. Please try again shortly.';
+  const ambiguousError = 'Your request is being processed. Please do not submit it again.';
+
+  if (!form.dataset) form.dataset = {};
+  if (form.dataset.submissionHandlerBound === 'true') return;
+  form.dataset.submissionHandlerBound = 'true';
+
+  function createSubmissionId() {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+    if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
+      const values = new Uint32Array(4);
+      window.crypto.getRandomValues(values);
+      return 'south-' + Array.from(values, function (value) { return value.toString(16).padStart(8, '0'); }).join('');
+    }
+    return 'south-' + Date.now() + '-' + Math.random().toString(16).slice(2) + Math.random().toString(16).slice(2);
+  }
+
+  function persistSubmissionState(state) {
+    try {
+      sessionStorage.setItem(pendingStorageKey, JSON.stringify({
+        submissionId,
+        state,
+        expiresAt: Date.now() + pendingRetentionMs
+      }));
+    } catch (error) {}
+  }
+
+  function clearSubmissionState() {
+    try { sessionStorage.removeItem(pendingStorageKey); } catch (error) {}
+  }
+
+  function restoreSubmissionState() {
+    let stored;
+    try { stored = JSON.parse(sessionStorage.getItem(pendingStorageKey) || 'null'); } catch (error) { stored = null; }
+    if (!stored || !/^[A-Za-z0-9][A-Za-z0-9_-]{15,127}$/.test(String(stored.submissionId || '')) ||
+        !Number.isFinite(stored.expiresAt) || stored.expiresAt <= Date.now()) {
+      clearSubmissionState();
+      return;
+    }
+    submissionId = stored.submissionId;
+    const submissionField = document.getElementById('submission_id');
+    if (submissionField) submissionField.value = submissionId;
+    if (stored.state !== 'pending') return;
+    submissionInProgress = true;
+    submissionHandled = true;
+    const button = document.getElementById('submitButton');
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'Processing...';
+    }
+    displayStatus(ambiguousError, 'error');
+  }
 
   function setError(elementId, message) {
     const target = document.getElementById(elementId);
@@ -212,11 +266,21 @@
       return;
     }
     if (!validateStepThree()) return;
+
+    if (!submissionId) {
+      submissionId = createSubmissionId();
+      const submissionField = document.getElementById('submission_id');
+      if (submissionField) submissionField.value = submissionId;
+    }
+    persistSubmissionState('pending');
     submissionInProgress = true;
     const button = document.getElementById('submitButton');
-    button.disabled = true;
-    button.textContent = 'Submitting...';
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'Submitting...';
+    }
     displayStatus('', '');
+
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -226,8 +290,46 @@
         redirect: 'error'
       });
       const result = await response.json();
+
+      if (result && result.outcome === 'pending') {
+        submissionInProgress = true;
+        submissionHandled = true;
+        persistSubmissionState('pending');
+        if (button) {
+          button.disabled = true;
+          button.textContent = 'Processing...';
+        }
+        displayStatus(ambiguousError, 'error');
+        return;
+      }
+
+      if (result && result.outcome === 'unavailable' && result.retryable === true) {
+        clearSubmissionState();
+        submissionInProgress = false;
+        submissionHandled = false;
+        if (button) {
+          button.disabled = false;
+          button.textContent = 'Request Info';
+        }
+        displayStatus(genericError, 'error');
+        return;
+      }
+
+      if (result && result.outcome === 'unavailable' && result.retryable === false) {
+        submissionInProgress = true;
+        submissionHandled = true;
+        persistSubmissionState('pending');
+        if (button) {
+          button.disabled = true;
+          button.textContent = 'Processing...';
+        }
+        displayStatus(ambiguousError, 'error');
+        return;
+      }
+
       if (response.ok && (result.outcome === 'accepted' || result.outcome === 'failed') && result.location) {
         submissionHandled = true;
+        clearSubmissionState();
         const eventId = String(document.getElementById('meta_event_id').value || '');
         form.reset();
         sessionStorage.removeItem('southProgramId');
@@ -240,10 +342,14 @@
       }
       throw new Error('Unable to complete request');
     } catch (error) {
-      submissionInProgress = false;
-      displayStatus(genericError, 'error');
-      button.disabled = false;
-      button.textContent = 'Request Info';
+      submissionInProgress = true;
+      submissionHandled = true;
+      persistSubmissionState('pending');
+      displayStatus(ambiguousError, 'error');
+      if (button) {
+        button.disabled = true;
+        button.textContent = 'Processing...';
+      }
     }
   });
 
@@ -255,6 +361,7 @@
       eventField.value = window.crypto && typeof window.crypto.randomUUID === 'function' ? window.crypto.randomUUID() :
         'south-' + Date.now() + '-' + Math.random().toString(16).slice(2);
     }
+    restoreSubmissionState();
     captureAttribution();
     setAddressValue();
     if (window.SOUTH_GRADUATION_YEARS) {
