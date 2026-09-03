@@ -4,6 +4,7 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const test = require('node:test');
 
 const source = fs.readFileSync(path.join(__dirname, '../public/js/function2.js'), 'utf8');
 
@@ -127,7 +128,46 @@ function buildHarness({ fetchImplementation, sessionStorage, overrides = {} }) {
   };
 }
 
-(async function () {
+async function withBlobStore(mockStoreFactory, callback) {
+  const blobModulePath = require.resolve('@netlify/blobs');
+  const originalModule = require.cache[blobModulePath];
+  require.cache[blobModulePath] = {
+    exports: { getStore: mockStoreFactory },
+    id: blobModulePath,
+    filename: blobModulePath,
+    loaded: true
+  };
+  delete require.cache[require.resolve('../netlify/functions/submit-lead.js')];
+  try {
+    const module = require('../netlify/functions/submit-lead.js');
+    const handler = module.handler || module;
+    return await callback(handler);
+  } finally {
+    if (originalModule) {
+      require.cache[blobModulePath] = originalModule;
+    } else {
+      delete require.cache[blobModulePath];
+    }
+    delete require.cache[require.resolve('../netlify/functions/submit-lead.js')];
+  }
+}
+
+function makeBaseLead() {
+  return new URLSearchParams({
+    submission_id: 'same-submission-id-123456',
+    'lead_education[program_id]': '114281',
+    'lead_education[grad_year]': '2027',
+    'lead_address[state]': 'FL',
+    'lead_address[zip]': '33601',
+    'lead[email]': 'test@example.com',
+    'lead[phone1]': '2125550100',
+    'lead[firstname]': 'Concurrent',
+    'lead[lastname]': 'Request',
+    'lead_consent[tcpa_consent]': '1'
+  }).toString();
+}
+
+test('browser duplicate-submission protection', async () => {
   let requests = 0;
   const pendingSession = storage();
   const rapidHarness = buildHarness({
@@ -193,9 +233,171 @@ function buildHarness({ fetchImplementation, sessionStorage, overrides = {} }) {
   });
   await invalidHarness.submit();
   assert.strictEqual(invalidHarness.button.disabled, false, 'Validation failures should not lock the form permanently');
+});
 
-  console.log('duplicate-submission browser tests passed');
-})().catch((error) => {
-  console.error(error);
-  process.exit(1);
+test('A. concurrent duplicate submissions: one winner, all losers return before vendor calls', async () => {
+  const originalSubmissionFlag = process.env.LEAD_SUBMISSION_ENABLED;
+  process.env.LEAD_SUBMISSION_ENABLED = 'true';
+  try {
+    for (let iteration = 0; iteration < 20; iteration += 1) {
+      const shared = { setJsonCalls: 0 };
+      const atomicStore = {
+        setJSON: async (key, value, opts) => {
+          if (opts && opts.onlyIfNew === true) {
+            shared.setJsonCalls += 1;
+            if (shared.setJsonCalls === 1) {
+              return { modified: true, etag: 'etag-owner' };
+            }
+            return { modified: false, etag: 'etag-loser' };
+          }
+          return { modified: true, etag: 'etag-commit' };
+        },
+        getWithMetadata: async () => ({
+          data: {
+            submissionId: 'same-submission-id-123456',
+            state: 'processing',
+            response: null,
+            expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString()
+          },
+          etag: 'etag-owner'
+        })
+      };
+
+      let leadHoopCalls = 0;
+      let prePingCalls = 0;
+      global.fetch = async (url) => {
+        const target = String(url || '');
+        if (target.includes('/v1/pings')) {
+          prePingCalls += 1;
+        }
+        if (target.includes('/incoming/leads')) {
+          leadHoopCalls += 1;
+        }
+        return { ok: true, json: async () => ({ ping_id: 'ping-123' }) };
+      };
+
+      const responses = await withBlobStore(() => atomicStore, async (handler) => Promise.all([
+        handler({ httpMethod: 'POST', body: makeBaseLead(), headers: { host: 'example.com', origin: 'https://example.com', 'x-nf-request-id': 'req-1' } }),
+        handler({ httpMethod: 'POST', body: makeBaseLead(), headers: { host: 'example.com', origin: 'https://example.com', 'x-nf-request-id': 'req-2' } }),
+        handler({ httpMethod: 'POST', body: makeBaseLead(), headers: { host: 'example.com', origin: 'https://example.com', 'x-nf-request-id': 'req-3' } }),
+        handler({ httpMethod: 'POST', body: makeBaseLead(), headers: { host: 'example.com', origin: 'https://example.com', 'x-nf-request-id': 'req-4' } })
+      ]));
+
+      assert.strictEqual(shared.setJsonCalls, 4, 'Every concurrent handler should attempt the atomic reservation once');
+      assert.strictEqual(prePingCalls, 1, 'The concurrent winner should perform exactly one pre-ping');
+      assert.strictEqual(leadHoopCalls, 1, 'The concurrent winner must be the only request that reaches the final LeadHoop post');
+      assert.strictEqual(responses.filter((result) => result.statusCode === 200).length, 1, 'Exactly one concurrent request should win the reservation');
+      assert.strictEqual(responses.filter((result) => result.statusCode === 202 || JSON.parse(result.body).outcome === 'pending').length, 3, 'The remaining concurrent requests must return duplicate or pending responses');
+      assert.ok(responses.every((result) => result.statusCode === 200 || result.statusCode === 202), 'Losing requests must exit before any outbound vendor side effect');
+    }
+  } finally {
+    if (originalSubmissionFlag === undefined) delete process.env.LEAD_SUBMISSION_ENABLED; else process.env.LEAD_SUBMISSION_ENABLED = originalSubmissionFlag;
+  }
+});
+
+test('B. reservation-store exception returns protected pending', async () => {
+  const originalSubmissionFlag = process.env.LEAD_SUBMISSION_ENABLED;
+  process.env.LEAD_SUBMISSION_ENABLED = 'true';
+  try {
+    await withBlobStore(() => ({
+      setJSON: async () => { throw new Error('blob store down'); }
+    }), async (handler) => {
+      let leadHoopCalls = 0;
+      let prePingCalls = 0;
+      global.fetch = async (url) => {
+        const target = String(url || '');
+        if (target.includes('/v1/pings')) prePingCalls += 1;
+        if (target.includes('/incoming/leads')) leadHoopCalls += 1;
+        return { ok: true, json: async () => ({ ping_id: 'ping-err' }) };
+      };
+
+      const result = await handler({
+        httpMethod: 'POST',
+        body: makeBaseLead(),
+        headers: { host: 'example.com', origin: 'https://example.com', 'x-nf-request-id': 'req-store-fail' }
+      });
+
+      assert.strictEqual(result.statusCode, 503, 'Blob-store errors must return HTTP 503');
+      assert.strictEqual(JSON.parse(result.body).outcome, 'pending', 'Blob-store errors must produce a pending outcome');
+      assert.strictEqual(JSON.parse(result.body).retryable, false, 'Blob-store errors must be non-retryable and protected');
+      assert.strictEqual(leadHoopCalls, 0, 'Blob-store errors must make zero LeadHoop calls');
+      assert.strictEqual(prePingCalls, 0, 'Blob-store errors must make zero pre-ping calls');
+    });
+  } finally {
+    if (originalSubmissionFlag === undefined) delete process.env.LEAD_SUBMISSION_ENABLED; else process.env.LEAD_SUBMISSION_ENABLED = originalSubmissionFlag;
+  }
+});
+
+test('C. indeterminate follow-up read returns protected pending', async () => {
+  const originalSubmissionFlag = process.env.LEAD_SUBMISSION_ENABLED;
+  process.env.LEAD_SUBMISSION_ENABLED = 'true';
+  try {
+    await withBlobStore(() => ({
+      setJSON: async (key, value, opts) => {
+        if (opts && opts.onlyIfNew === true) return { modified: false, etag: 'etag-lookup-fail' };
+        return { modified: true, etag: 'etag-commit' };
+      },
+      getWithMetadata: async () => { throw new Error('lookup failure'); }
+    }), async (handler) => {
+      let leadHoopCalls = 0;
+      global.fetch = async (url) => {
+        const target = String(url || '');
+        if (target.includes('/incoming/leads')) leadHoopCalls += 1;
+        return { ok: true, json: async () => ({ ping_id: 'ping-lookup' }) };
+      };
+
+      const result = await handler({
+        httpMethod: 'POST',
+        body: makeBaseLead(),
+        headers: { host: 'example.com', origin: 'https://example.com', 'x-nf-request-id': 'req-lookup-fail' }
+      });
+
+      assert.strictEqual(result.statusCode, 503, 'Uncertain storage reads must return HTTP 503');
+      assert.strictEqual(JSON.parse(result.body).outcome, 'pending', 'Uncertain reads must produce a pending outcome');
+      assert.strictEqual(leadHoopCalls, 0, 'Uncertain reads must not call LeadHoop');
+    });
+  } finally {
+    if (originalSubmissionFlag === undefined) delete process.env.LEAD_SUBMISSION_ENABLED; else process.env.LEAD_SUBMISSION_ENABLED = originalSubmissionFlag;
+  }
+});
+
+test('D. completed duplicate returns the preserved safe outcome', async () => {
+  const originalSubmissionFlag = process.env.LEAD_SUBMISSION_ENABLED;
+  process.env.LEAD_SUBMISSION_ENABLED = 'true';
+  try {
+    await withBlobStore(() => ({
+      setJSON: async (key, value, opts) => {
+        if (opts && opts.onlyIfNew === true) return { modified: false, etag: 'etag-done' };
+        return { modified: true, etag: 'etag-commit' };
+      },
+      getWithMetadata: async () => ({
+        data: {
+          submissionId: 'same-submission-id-123456',
+          state: 'completed',
+          response: { outcome: 'accepted', location: '/thank-you/' },
+          expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString()
+        },
+        etag: 'etag-done'
+      })
+    }), async (handler) => {
+      let leadHoopCalls = 0;
+      global.fetch = async (url) => {
+        const target = String(url || '');
+        if (target.includes('/incoming/leads')) leadHoopCalls += 1;
+        return { ok: true, json: async () => ({ ping_id: 'ping-duplicate' }) };
+      };
+
+      const result = await handler({
+        httpMethod: 'POST',
+        body: makeBaseLead(),
+        headers: { host: 'example.com', origin: 'https://example.com', 'x-nf-request-id': 'req-completed' }
+      });
+
+      assert.strictEqual(leadHoopCalls, 0, 'Completed duplicates must not trigger LeadHoop');
+      assert.strictEqual(result.statusCode, 200, 'Completed duplicates must preserve the safe success response');
+      assert.strictEqual(JSON.parse(result.body).outcome, 'accepted', 'Completed duplicates must return the recorded success payload');
+    });
+  } finally {
+    if (originalSubmissionFlag === undefined) delete process.env.LEAD_SUBMISSION_ENABLED; else process.env.LEAD_SUBMISSION_ENABLED = originalSubmissionFlag;
+  }
 });

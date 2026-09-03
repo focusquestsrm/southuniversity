@@ -75,17 +75,17 @@ async function reserveSubmission(store, submissionId, requestId, now) {
     const existing = await readRecord(store, key);
     if (!existing) {
       const retried = await store.setJSON(key, record, { onlyIfNew: true });
-      return resultModified(retried) ? { owner: true, key, etag: retried && retried.etag ? retried.etag : null, record } : { owner: false, key, record: null };
+      return resultModified(retried) ? { owner: true, key, etag: retried && retried.etag ? retried.etag : null, record } : { owner: false, indeterminate: false, key, record: null };
     }
     if (isExpired(existing.data, now)) {
       const replaced = await store.setJSON(key, record, { onlyIfMatch: existing.etag });
       if (resultModified(replaced)) return { owner: true, key, etag: replaced && replaced.etag ? replaced.etag : null, record };
       const winner = await readRecord(store, key);
-      return { owner: false, key, record: winner && winner.data };
+      return { owner: false, indeterminate: false, key, record: winner && winner.data };
     }
-    return { owner: false, key, record: existing.data };
+    return { owner: false, indeterminate: false, key, record: existing.data };
   } catch (error) {
-    return { owner: true, key, etag: null, record };
+    return { owner: false, indeterminate: true, key, record: null };
   }
 }
 
@@ -160,6 +160,18 @@ exports.handler = async function handler(event) {
   const store = getStore({ name: STORE_NAME, consistency: 'strong' });
   const requestId = event.headers && (event.headers['x-nf-request-id'] || event.headers['X-Nf-Request-Id']) || null;
   const reservation = await reserveSubmission(store, submissionId, requestId, new Date());
+
+  if (reservation.indeterminate === true) {
+    console.error(JSON.stringify({
+      event: 'idempotency_store_unavailable',
+      submissionId,
+      requestId,
+      storeName: STORE_NAME,
+      outboundRequests: 0
+    }));
+    return response(503, { outcome: 'pending', retryable: false, message: 'Your request is being processed. Please do not submit it again.' });
+  }
+
   if (!reservation.owner) {
     const duplicate = responseForDuplicate(reservation.record);
     return response(duplicate.statusCode, duplicate.body);
