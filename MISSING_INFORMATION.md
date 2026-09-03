@@ -162,15 +162,14 @@ All available information has been implemented with appropriate placeholders. Th
 - Country: United States only ✅
 
 ### Programs
-- B.A. – Psychology (114281) ✅
-- B.B.A. – Business Administration (114282) ✅
-- B.S. – Accounting (114283) ✅ with CA restriction
-- B.S. – Criminal Justice (114284) ✅ with NJ restriction
-- B.S. – Healthcare Management (114286) ✅ with NJ restriction
-- B.S. – Information Technology (114266) ✅ with NJ restriction
-- B.S. – Legal Studies (114273) ✅ with NJ restriction
-- B.S. – Public Health (114268) ✅ with NJ restriction
-- RN-to-BSN (114267): Excluded ✅
+- Psychology (114281) ✅
+- Business Administration (114282) ✅
+- Accounting (114283) ✅ with CA restriction
+- Criminal Justice (114284) ✅ with NJ restriction
+- Healthcare Management (114286) ✅ with NJ restriction
+- Information Technology (114266) ✅ with NJ restriction
+- Legal Studies (114273) ✅ with NJ restriction
+- Public Health (114268) ✅ with NJ restriction
 
 ### Form Functionality
 - Multi-step form with 5 steps ✅

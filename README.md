@@ -23,14 +23,14 @@ Campaign-driven landing page for South University Online's accelerated bachelor'
 - ✅ **Double-submission prevention** - Idempotency and duplicate checks
 
 ### Programs Offered
-- B.A. – Psychology
-- B.B.A. – Business Administration
-- B.S. – Accounting
-- B.S. – Criminal Justice
-- B.S. – Healthcare Management
-- B.S. – Information Technology
-- B.S. – Legal Studies
-- B.S. – Public Health
+- Psychology
+- Business Administration
+- Accounting
+- Criminal Justice
+- Healthcare Management
+- Information Technology
+- Legal Studies
+- Public Health
 
 ### Compliance & Security
 - ✅ **TCPA compliance** - Unchecked consent by default, requires affirmative consent
@@ -170,7 +170,7 @@ All sensitive configuration is externalized. See `.env.example` for complete lis
 
 **Program-Specific Restrictions**:
 - Accounting: Not available in CA
-- IT, Public Health, Legal Studies, Accounting, Criminal Justice, Healthcare Management: Not available in NJ
+- Information Technology, Public Health, Legal Studies, Accounting, Criminal Justice, Healthcare Management: Not available in NJ
 
 ### Form Validation
 - Names: 2-50 characters, letters/hyphens/apostrophes only
@@ -297,7 +297,7 @@ All logos preserve aspect ratio and display without distortion.
 ## Accessibility
 
 - Semantic HTML5 structure
-- Form labels associated with inputs
+- Form labels for inputs
 - Required field indicators
 - Error messages linked to fields
 - Keyboard navigation supported

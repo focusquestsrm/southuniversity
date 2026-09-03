@@ -6,8 +6,8 @@
 // Mock configuration
 global.config = {
     programs: [
-        { id: '114281', name: 'B.A. – Psychology' },
-        { id: '114283', name: 'B.S. – Accounting', restrictions: { states: ['CA'] } }
+        { id: '114281', name: 'Psychology' },
+        { id: '114283', name: 'Accounting', restrictions: { states: ['CA'] } }
     ],
     ineligibleStates: ['CT', 'MA', 'NY', 'OR'],
     educationLevels: {

@@ -2,14 +2,14 @@
   'use strict';
 
   const approvedPrograms = [
-    ['114281', 'B.A. - Psychology'],
-    ['114282', 'B.B.A. - Business Administration'],
-    ['114283', 'B.S. - Accounting'],
-    ['114284', 'B.S. - Criminal Justice'],
-    ['114286', 'B.S. - Healthcare Management'],
-    ['114266', 'B.S. - Information Technology'],
-    ['114273', 'B.S. - Legal Studies'],
-    ['114268', 'B.S. - Public Health']
+    ['114281', 'Psychology'],
+    ['114282', 'Business Administration'],
+    ['114283', 'Accounting'],
+    ['114284', 'Criminal Justice'],
+    ['114286', 'Healthcare Management'],
+    ['114266', 'Information Technology'],
+    ['114273', 'Legal Studies'],
+    ['114268', 'Public Health']
   ].map(function (entry, index) {
     return { program_id: entry[0], program_name: entry[1], active: true, display_order: index + 1 };
   });
