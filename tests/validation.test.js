@@ -258,6 +258,36 @@ test('Should identify ineligible state', () => {
     assert(isIneligible, 'MA should be ineligible');
 });
 
+const fs = require('fs');
+const path = require('path');
+
+const programSource = fs.readFileSync(path.join(__dirname, '../public/js/program-availability.js'), 'utf8');
+const pageHtml = fs.readFileSync(path.join(__dirname, '../public/index.html'), 'utf8');
+
+test('Campaign includes 11 approved South University programs without degree abbreviations', () => {
+    const expectedIds = [
+        '114280', '114276', '114278',
+        '114281', '114282', '114283', '114284', '114286', '114266', '114273', '114268'
+    ];
+    expectedIds.forEach((id) => {
+        assert(programSource.includes(id), `Missing program ID ${id}`);
+    });
+    assert(programSource.includes('Allied Health Science'), 'Missing Allied Health Science');
+    assert(programSource.includes('Medical Assisting'), 'Missing Medical Assisting');
+    assert(programSource.includes('Paralegal Studies'), 'Missing Paralegal Studies');
+    assert(!programSource.includes('B.A.'), 'Degree abbreviations should not be present in program names');
+    assert(!programSource.includes('B.S.'), 'Degree abbreviations should not be present in program names');
+    assert(!programSource.includes('A.S.'), 'Associate abbreviations should not be present in program names');
+});
+
+test('Public page reflects the approved South University degree-program wording and no campaign number', () => {
+    assert(pageHtml.includes('Discover South University Online'), 'Page should include the South University discovery heading');
+    assert(pageHtml.includes('Powered by Launch Your Degree') || pageHtml.includes('Powered by Launch Your Degree'), 'Footer should say Powered by Launch Your Degree');
+    assert(!pageHtml.includes('Campaign #12211'), 'Campaign number should be absent from public page');
+    assert(!pageHtml.includes('Back2Learn'), 'Back2Learn text should not appear on public page');
+    assert(!pageHtml.includes('Bachelor\'s Programs'), 'Bachelor-only wording should not remain on the public page');
+});
+
 test('Should identify eligible state', () => {
     const isIneligible = global.config.isStateIneligible('TX');
     assert(!isIneligible, 'TX should be eligible');

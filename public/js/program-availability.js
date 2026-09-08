@@ -2,6 +2,9 @@
   'use strict';
 
   const approvedPrograms = [
+    ['114280', 'Allied Health Science'],
+    ['114276', 'Medical Assisting'],
+    ['114278', 'Paralegal Studies'],
     ['114281', 'Psychology'],
     ['114282', 'Business Administration'],
     ['114283', 'Accounting'],
