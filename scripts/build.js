@@ -20,6 +20,24 @@ console.log(`${BLUE}════════════════════
 
 let hasErrors = false;
 
+function writeRuntimeConfig() {
+    const runtimeConfigPath = path.join(__dirname, '..', 'public', 'js', 'runtime-config.js');
+    const googleMapsBrowserKey = String(process.env.GOOGLE_MAPS_BROWSER_KEY || '');
+    const jornayaCampaignId = String(process.env.JORNAYA_CAMPAIGN_ID || '');
+    const jornayaScriptVersion = String(process.env.JORNAYA_SCRIPT_VERSION || '2');
+
+    const content = [
+        'window.SOUTH_RUNTIME_CONFIG = Object.freeze({',
+        `  googleMapsBrowserKey: ${JSON.stringify(googleMapsBrowserKey)},`,
+        `  jornayaCampaignId: ${JSON.stringify(jornayaCampaignId)},`,
+        `  jornayaScriptVersion: ${JSON.stringify(jornayaScriptVersion)}`,
+        '});',
+        ''
+    ].join('\n');
+
+    fs.writeFileSync(runtimeConfigPath, content, 'utf8');
+}
+
 // Task 1: Check Node version
 console.log(`${BLUE}→ Checking Node version...${RESET}`);
 const nodeVersion = process.versions.node;
@@ -30,6 +48,8 @@ if (majorVersion < 18) {
 } else {
     console.log(`${GREEN}✓ Node ${nodeVersion}${RESET}\n`);
 }
+
+writeRuntimeConfig();
 
 // Task 2: Verify required files
 console.log(`${BLUE}→ Verifying project structure...${RESET}`);

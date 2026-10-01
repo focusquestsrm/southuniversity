@@ -59,6 +59,7 @@
               >
                 <input type="hidden" name="lead[service_leadid]" id="leadid_token" />
                 <input type="hidden" name="lead[service_trusted_form]" id="xxTrustedFormCertUrl_0" value="" />
+                <input type="hidden" name="lead_consent[tcpa_consent]" id="lead_consent_tcpa_consent" value="Y" />
                 <input type="hidden" name="subid4" id="subid4" />
                 <input type="hidden" name="subid2" id="subid2" />
                 <input type="hidden" name="subid3" id="subid3" />
@@ -435,13 +436,23 @@
     <noscript><img src="https://api.trustedform.com/ns.gif" alt="" /></noscript>
     <script id="LeadiDscript" type="text/javascript">
       (function() {
+        var runtime = window.SOUTH_RUNTIME_CONFIG || {};
+        var campaignId = String(runtime.jornayaCampaignId || '').trim();
+        var scriptVersion = String(runtime.jornayaScriptVersion || '2').trim() || '2';
+
+        if (!campaignId) {
+          return;
+        }
+
         var s = document.createElement('script');
         s.id = 'LeadiDscript_campaign';
         s.type = 'text/javascript';
         s.async = true;
-        s.src = '';
+        s.src = 'https://create.lidstatic.com/campaign/' + encodeURIComponent(campaignId) + '.js?snippet_version=' + encodeURIComponent(scriptVersion);
         var LeadiDscript = document.getElementById('LeadiDscript');
-        LeadiDscript.parentNode.insertBefore(s, LeadiDscript);
+        if (LeadiDscript && LeadiDscript.parentNode) {
+          LeadiDscript.parentNode.insertBefore(s, LeadiDscript);
+        }
       })();
     </script>
   </body>

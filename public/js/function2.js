@@ -77,6 +77,35 @@
     status.className = 'status-message' + (type === 'error' ? ' is-error' : '');
   }
 
+  function resolveLeadIdValue() {
+    const field = document.getElementById('leadid_token');
+    const candidates = [
+      field && field.value,
+      window.leadid_token,
+      window.leadiD,
+      window.leadId,
+      window.LeadID,
+      window.__leadid,
+      document.querySelector('input[name="lead[service_leadid]"]') && document.querySelector('input[name="lead[service_leadid]"]').value
+    ];
+    for (const candidate of candidates) {
+      const value = String(candidate || '').trim();
+      if (value) return value;
+    }
+    return '';
+  }
+
+  function syncLeadIdField() {
+    const field = document.getElementById('leadid_token');
+    if (!field) return false;
+    const value = resolveLeadIdValue();
+    if (!value) return false;
+    field.value = value;
+    field.dispatchEvent(new Event('input', { bubbles: true }));
+    field.dispatchEvent(new Event('change', { bubbles: true }));
+    return true;
+  }
+
   function captureAttribution() {
     const params = new URLSearchParams(window.location.search);
     ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'campaign_id'].forEach(function (key) {
@@ -267,6 +296,15 @@
     }
     if (!validateStepThree()) return;
 
+    const leadIdField = document.getElementById('leadid_token');
+    if (!leadIdField || !String(leadIdField.value || '').trim()) {
+      syncLeadIdField();
+      if (!leadIdField || !String(leadIdField && leadIdField.value || '').trim()) {
+        displayStatus('Your session is still preparing your lead identification. Please wait a moment and try again.', 'error');
+        return;
+      }
+    }
+
     if (!submissionId) {
       submissionId = createSubmissionId();
       const submissionField = document.getElementById('submission_id');
@@ -356,6 +394,17 @@
   async function initialize() {
     const phone = document.getElementById('lead_phone1');
     if (phone) phone.addEventListener('input', function () { phone.value = phone.value.replace(/\D/g, '').slice(0, 10); });
+    const consentField = document.getElementById('lead_consent_tcpa_consent');
+    if (consentField && !consentField.value) consentField.value = 'Y';
+    const leadIdField = document.getElementById('leadid_token');
+    if (leadIdField) {
+      const syncLeadIdTimer = window.setInterval(function () {
+        if (syncLeadIdField()) {
+          window.clearInterval(syncLeadIdTimer);
+        }
+      }, 250);
+      window.setTimeout(function () { window.clearInterval(syncLeadIdTimer); }, 15000);
+    }
     const eventField = document.getElementById('meta_event_id');
     if (eventField && !eventField.value) {
       eventField.value = window.crypto && typeof window.crypto.randomUUID === 'function' ? window.crypto.randomUUID() :

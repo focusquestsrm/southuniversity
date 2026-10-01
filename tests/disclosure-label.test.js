@@ -16,5 +16,6 @@ test('Jornaya no-interaction TCPA disclosure is tagged correctly', () => {
   const labelPattern = new RegExp(`<label[^>]*for="${inputId}"[^>]*>\\s*${disclosureText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*</label>`, 'i');
   assert.ok(labelPattern.test(html), 'Disclosure label is missing or does not match the hidden disclosure input');
   assert.ok(!/type="checkbox"[^>]*data-leadid-type="disclosure"/i.test(html), 'A disclosure checkbox should not be present');
-  assert.ok(!/lead_consent\[tcpa_consent\]/i.test(html), 'TCPA consent checkbox field should remain absent');
+  assert.ok(/name="lead_consent\[tcpa_consent\]"/i.test(html), 'The hidden LeadHoop TCPA payload field is missing');
+  assert.ok(/type="hidden"[^>]*name="lead_consent\[tcpa_consent\]"/i.test(html), 'The hidden TCPA payload field should remain hidden and separate from the Jornaya disclosure marker');
 });

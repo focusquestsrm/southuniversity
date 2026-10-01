@@ -134,13 +134,18 @@ exports.handler = async function handler(event) {
   if (required.some(field => !String(lead[field] || '').trim())) {
     return response(400, { outcome: 'unavailable', retryable: true, error: 'Required lead fields are missing.' });
   }
+  const leadId = String(lead['lead[service_leadid]'] || '').trim();
+  if (!leadId) {
+    return response(400, { outcome: 'unavailable', retryable: true, error: 'Your session is still preparing your lead identification. Please wait a moment and try again.' });
+  }
   if (!/^\d{5}$/.test(String(lead['lead_address[zip]'] || ''))) {
     return response(400, { outcome: 'unavailable', retryable: true, error: 'A valid ZIP code is required.' });
   }
   if (!/^\d{10}$/.test(String(lead['lead[phone1]'] || '').replace(/\D/g, ''))) {
     return response(400, { outcome: 'unavailable', retryable: true, error: 'A valid phone number is required.' });
   }
-  if (lead['lead_consent[tcpa_consent]'] !== '1') {
+  const consentValue = String(lead['lead_consent[tcpa_consent]'] || '').trim().toUpperCase();
+  if (!['1', 'Y', 'YES', 'TRUE'].includes(consentValue)) {
     return response(400, { outcome: 'unavailable', retryable: true, error: 'Consent is required.' });
   }
   const unavailableStates = ['CT', 'MA', 'MS', 'NY', 'OR', 'RI', 'DC', 'AA', 'AE', 'AP', 'PR', 'VI', 'AS', 'GU', 'MP'];
@@ -155,7 +160,7 @@ exports.handler = async function handler(event) {
   payload.set('campaign_code', CAMPAIGN_CODE);
   payload.set('lead_education[campus_id]', CAMPUS_ID);
   payload.set('lead[media_type]', process.env.LEADHOOP_MEDIA_TYPE || 'noncallcenter');
-  payload.set('lead[test]', process.env.LEAD_TEST_MODE === 'true' ? '1' : '0');
+  payload.set('lead[test]', process.env.LEAD_TEST_MODE === 'true' ? 'true' : 'false');
 
   const store = getStore({ name: STORE_NAME, consistency: 'strong' });
   const requestId = event.headers && (event.headers['x-nf-request-id'] || event.headers['X-Nf-Request-Id']) || null;

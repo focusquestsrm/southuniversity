@@ -55,6 +55,8 @@ function buildHarness({ fetchImplementation, sessionStorage, overrides = {} }) {
   field('lead_lastname', 'lead[lastname]', 'Review');
   field('lead_email', 'lead[email]', 'browser.review@example.invalid');
   field('lead_phone1', 'lead[phone1]', '2125550100');
+  field('leadid_token', 'lead[service_leadid]', 'leadid-test-123');
+  field('lead_consent_tcpa_consent', 'lead_consent[tcpa_consent]', 'Y');
   field('meta_event_id', 'meta_event_id', 'meta-event-safe');
   field('submission_id', 'submission_id', '');
   field('status-message', '', '');
@@ -104,6 +106,8 @@ function buildHarness({ fetchImplementation, sessionStorage, overrides = {} }) {
     },
     fetch: fetchImplementation,
     setTimeout: (callback) => callback(),
+    setInterval: () => 1,
+    clearInterval: () => {},
     SOUTH_GRADUATION_YEARS: {
       isValid: (value) => value === '2027',
       populateSelect: () => {}
@@ -161,9 +165,10 @@ function makeBaseLead() {
     'lead_address[zip]': '33601',
     'lead[email]': 'test@example.com',
     'lead[phone1]': '2125550100',
+    'lead[service_leadid]': 'leadid-test-123',
     'lead[firstname]': 'Concurrent',
     'lead[lastname]': 'Request',
-    'lead_consent[tcpa_consent]': '1'
+    'lead_consent[tcpa_consent]': 'Y'
   }).toString();
 }
 
