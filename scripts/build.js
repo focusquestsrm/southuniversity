@@ -62,6 +62,8 @@ const requiredFiles = [
     'public/js/graduation-years.js',
     'public/js/runtime-config.js',
     'netlify/functions/submit-lead.js',
+    'public/images/south-university-online-logo.svg',
+    'public/images/LYD-color-logo.png',
     'public/images/south-university-logo.png',
     'public/images/launch-your-degree-logo.png',
     'public/images/south-university-hero-flipped.png',
@@ -90,8 +92,12 @@ if (filesMissing > 0) {
 console.log(`${BLUE}→ Verifying logo files...${RESET}`);
 const logoFiles = [
     {
-        path: 'public/images/south-university-logo.png',
+        path: 'public/images/south-university-online-logo.svg',
         name: 'South University Logo'
+    },
+    {
+        path: 'public/images/LYD-color-logo.png',
+        name: 'Launch Your Degree Logo'
     },
     {
         path: 'public/images/launch-your-degree-logo.png',

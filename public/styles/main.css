@@ -11,6 +11,7 @@
   --south-white: #ffffff;
   --south-danger: #d92d20;
   --south-success: #1fcb65;
+  --south-teal: #17a4b5;
   --field-shadow: 0 0.1rem 0.5rem rgba(6, 26, 61, 0.12);
 }
 
@@ -63,6 +64,7 @@ a:focus-visible {
   display: inline-flex;
   align-items: center;
   line-height: 0;
+  gap: 1rem;
 }
 
 .navbar-brand img {
@@ -74,9 +76,42 @@ a:focus-visible {
   vertical-align: middle;
 }
 
-.navbar-brand img:first-of-type { height: 58px; }
-.navbar-brand .publisher-logo { height: 38px; max-width: 180px; }
-.brand-divider { height: 32px; width: 1px; background: rgba(6, 26, 61, 0.25); margin: 0 1rem; }
+.navbar-brand .south-university-logo {
+  width: min(300px, 100%);
+  max-width: 300px;
+  height: auto;
+  min-height: 38px;
+  display: block;
+  object-fit: contain;
+  background: transparent;
+}
+
+.navbar-brand .publisher-logo {
+  height: 38px;
+  max-width: 180px;
+  width: auto;
+  object-fit: contain;
+}
+.brand-divider { height: 32px; width: 1px; background: rgba(6, 26, 61, 0.25); margin: 0; }
+.hero-tagline {
+  margin: 0 0 0.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.footnote-link {
+  color: var(--south-orange);
+  text-decoration: underline;
+  font-size: 0.72em;
+  vertical-align: super;
+  line-height: 0;
+}
+.footnote-link:hover,
+.footnote-link:focus-visible {
+  color: var(--south-orange-hover);
+}
 
 .hero-shell {
   background-color: var(--south-navy);
@@ -296,9 +331,10 @@ h2.section-title {
   justify-content: center;
   align-items: stretch;
   width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
   row-gap: 1.5rem;
-  column-gap: 1rem;
+  column-gap: 1.25rem;
 }
 
 #program-card-list > [class*='col-'] {
@@ -317,7 +353,8 @@ h2.section-title {
   text-align: center;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
+  justify-content: space-between;
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -329,17 +366,18 @@ h2.section-title {
 }
 
 .program-title {
-  font-size: clamp(1.5rem, 1.8vw, 1.75rem);
+  font-size: clamp(1.35rem, 1.8vw, 1.7rem);
   line-height: 1.25;
   font-weight: 700;
   color: var(--south-navy);
   margin: 0;
   flex: 1;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   text-align: center;
   min-height: 0;
+  width: 100%;
 }
 
 .program-card .program-link,
@@ -349,19 +387,66 @@ h2.section-title {
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 240px;
+  max-width: 210px;
   min-height: 52px;
   margin: auto auto 0;
-  padding: 12px 20px;
+  padding: 12px 18px;
   box-sizing: border-box;
   border-radius: 10px;
   text-align: center;
   text-decoration: none;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .why-choose {
   padding: 3rem 0 4rem;
+  background: #f6f9fb;
+}
+
+.value-title {
+  margin-bottom: 1.5rem;
+}
+
+.value-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+
+.value-card {
+  background: var(--south-white);
+  border: 1px solid var(--south-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(6, 26, 61, 0.05);
+  padding: 1.5rem 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+}
+
+.value-card-icon {
+  width: 64px;
+  height: 64px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(23, 164, 181, 0.12);
+  color: var(--south-navy-deep);
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.value-card h3 {
+  margin: 0;
+  font-size: 1.12rem;
+  line-height: 1.5;
+  color: var(--south-dark);
 }
 
 .why-choose .feature {
@@ -513,8 +598,13 @@ h2.section-title {
 }
 
 @media (max-width: 767px) {
-  .navbar-brand img {
-    padding-left: 0;
+  .navbar-brand {
+    gap: 0.75rem;
+  }
+
+  .navbar-brand .south-university-logo {
+    max-width: 220px;
+    width: min(220px, 100%);
   }
 
   .hero-grid {
@@ -547,8 +637,18 @@ h2.section-title {
     max-width: 100%;
   }
 
+  .value-grid {
+    grid-template-columns: 1fr;
+  }
+
   .accreditation-band .row > div {
     margin-bottom: 1.25rem;
+  }
+}
+
+@media (max-width: 991px) {
+  .value-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
