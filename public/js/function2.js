@@ -1,6 +1,23 @@
 (function () {
   'use strict';
 
+  function normalizePhone(value) {
+    if (typeof value !== 'string') return null;
+    const text = value.trim();
+    if (!/^\+?[\d\s().-]+$/.test(text)) return null;
+    const digits = text.replace(/\D/g, '');
+    let normalized = null;
+    if (digits.length === 10 && text.charAt(0) !== '+') normalized = digits;
+    else if (digits.length === 11 && digits.charAt(0) === '1') normalized = digits.slice(1);
+    return normalized && normalized.charAt(0) !== '1' ? normalized : null;
+  }
+
+  const SOUTH_PHONE = Object.freeze({
+    MESSAGE: 'Phone number is not valid',
+    normalize: normalizePhone
+  });
+  window.SOUTH_PHONE = SOUTH_PHONE;
+
   const form = document.getElementById('leadform');
   if (!form) return;
 
@@ -236,7 +253,7 @@
       ['lead_firstname', 'Please enter your first name.', 'first-name-error', function (value) { return value.length >= 2; }],
       ['lead_lastname', 'Please enter your last name.', 'last-name-error', function (value) { return value.length >= 2; }],
       ['lead_email', 'Please enter a valid email address.', 'email-error', function (value) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value); }],
-      ['lead_phone1', 'Please enter a valid 10-digit phone number.', 'phone-error', function (value) { return /^\d{10}$/.test(value.replace(/\D/g, '')); }]
+      ['lead_phone1', SOUTH_PHONE.MESSAGE, 'phone-error', function (value) { return SOUTH_PHONE.normalize(value) !== null; }]
     ];
     for (const check of checks) {
       const field = document.getElementById(check[0]);
@@ -248,6 +265,8 @@
       }
       setError(check[2], '');
     }
+    const phoneField = document.getElementById('lead_phone1');
+    if (phoneField) phoneField.value = SOUTH_PHONE.normalize(String(phoneField.value || '').trim()) || '';
     setError('consent-error', '');
     return true;
   }
@@ -393,7 +412,14 @@
 
   async function initialize() {
     const phone = document.getElementById('lead_phone1');
-    if (phone) phone.addEventListener('input', function () { phone.value = phone.value.replace(/\D/g, '').slice(0, 10); });
+    if (phone) {
+      phone.setAttribute('type', 'tel');
+      phone.setAttribute('inputmode', 'tel');
+      phone.setAttribute('autocomplete', 'tel');
+      phone.removeAttribute('maxlength');
+      phone.removeAttribute('pattern');
+      phone.addEventListener('input', function () { /* Preserve the full typed value until validation */ });
+    }
     const consentField = document.getElementById('lead_consent_tcpa_consent');
     if (consentField && !consentField.value) consentField.value = 'Y';
     const leadIdField = document.getElementById('leadid_token');

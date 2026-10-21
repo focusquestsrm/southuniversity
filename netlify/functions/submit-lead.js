@@ -21,6 +21,17 @@ function parseBody(event) {
   return Object.fromEntries(params.entries());
 }
 
+function normalizePhoneValue(value) {
+  if (typeof value !== 'string') return null;
+  const text = value.trim();
+  if (!/^\+?[\d\s().-]+$/.test(text)) return null;
+  const digits = text.replace(/\D/g, '');
+  let normalized = null;
+  if (digits.length === 10 && text.charAt(0) !== '+') normalized = digits;
+  else if (digits.length === 11 && digits.charAt(0) === '1') normalized = digits.slice(1);
+  return normalized && normalized.charAt(0) !== '1' ? normalized : null;
+}
+
 function validSubmissionId(value) {
   return /^[A-Za-z0-9][A-Za-z0-9_-]{15,127}$/.test(String(value || ''));
 }
@@ -141,9 +152,11 @@ exports.handler = async function handler(event) {
   if (!/^\d{5}$/.test(String(lead['lead_address[zip]'] || ''))) {
     return response(400, { outcome: 'unavailable', retryable: true, error: 'A valid ZIP code is required.' });
   }
-  if (!/^\d{10}$/.test(String(lead['lead[phone1]'] || '').replace(/\D/g, ''))) {
+  const normalizedPhone = normalizePhoneValue(String(lead['lead[phone1]'] || ''));
+  if (normalizedPhone === null) {
     return response(400, { outcome: 'unavailable', retryable: true, error: 'A valid phone number is required.' });
   }
+  lead['lead[phone1]'] = normalizedPhone;
   const consentValue = String(lead['lead_consent[tcpa_consent]'] || '').trim().toUpperCase();
   if (!['1', 'Y', 'YES', 'TRUE'].includes(consentValue)) {
     return response(400, { outcome: 'unavailable', retryable: true, error: 'Consent is required.' });
