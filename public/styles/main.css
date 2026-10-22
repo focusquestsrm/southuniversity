@@ -63,31 +63,35 @@ a:focus-visible {
 .navbar-brand {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   line-height: 0;
   gap: 1rem;
+  min-height: 72px;
 }
 
 .navbar-brand img {
   display: block;
-  height: 50px;
+  height: auto;
   width: auto;
+  max-height: 64px;
   object-fit: contain;
   line-height: 0;
   vertical-align: middle;
 }
 
 .navbar-brand .south-university-logo {
-  width: min(300px, 100%);
-  max-width: 300px;
-  height: auto;
-  min-height: 38px;
+  width: auto;
+  max-width: 100%;
+  max-height: 64px;
+  min-height: 0;
   display: block;
   object-fit: contain;
   background: transparent;
 }
 
 .navbar-brand .publisher-logo {
-  height: 38px;
+  height: auto;
+  max-height: 36px;
   max-width: 180px;
   width: auto;
   object-fit: contain;
@@ -359,6 +363,16 @@ h2.section-title {
   box-sizing: border-box;
 }
 
+.healthcare-programs .container {
+  max-width: 1200px;
+}
+
+.healthcare-programs .row {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
 .program-card .program-icon {
   font-size: 2.6rem;
   line-height: 1;
@@ -440,6 +454,12 @@ h2.section-title {
   font-weight: 700;
   font-size: 0.9rem;
   margin-bottom: 1rem;
+}
+
+.value-card-icon svg {
+  width: 28px;
+  height: 28px;
+  display: block;
 }
 
 .value-card h3 {
@@ -600,11 +620,17 @@ h2.section-title {
 @media (max-width: 767px) {
   .navbar-brand {
     gap: 0.75rem;
+    min-height: 56px;
   }
 
   .navbar-brand .south-university-logo {
     max-width: 220px;
-    width: min(220px, 100%);
+    max-height: 52px;
+    width: auto;
+  }
+
+  .navbar-brand .publisher-logo {
+    max-height: 32px;
   }
 
   .hero-grid {
@@ -654,6 +680,8 @@ h2.section-title {
 
 @media (min-width: 768px) {
   .container { max-width: 720px; }
+  .navbar-brand { min-height: 68px; }
+  .navbar-brand .south-university-logo { max-height: 62px; }
   .col-md-2 { width: 16.66666667%; }
   .col-md-4 { width: 33.33333333%; }
   .col-md-5 { width: 41.66666667%; }
@@ -664,6 +692,8 @@ h2.section-title {
 
 @media (min-width: 992px) {
   .container { max-width: 960px; }
+  .navbar-brand { min-height: 72px; }
+  .navbar-brand .south-university-logo { max-height: 64px; }
   .col-lg-3 { width: 25%; }
   .col-lg-4 { width: 33.33333333%; }
   .col-lg-7 { width: 58.33333333%; }
