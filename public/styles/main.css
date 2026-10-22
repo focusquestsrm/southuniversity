@@ -323,10 +323,17 @@ h2.section-title {
   font-weight: 700;
   color: var(--south-navy);
   margin-bottom: 1.5rem;
+  width: 100%;
 }
 
 .text-accent {
   color: var(--south-navy-deep);
+}
+
+.healthcare-programs .row.justify-content-center .col-lg-10,
+.healthcare-programs .row.justify-content-center .col-xl-9 {
+  flex: 0 0 100%;
+  max-width: 100%;
 }
 
 .program-grid {
