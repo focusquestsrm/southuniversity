@@ -61,58 +61,67 @@ a:focus-visible {
 }
 
 .navbar > .container-fluid {
-  padding-left: 1rem;
-  padding-right: 1rem;
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .navbar-brand {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  min-height: 88px;
   line-height: 0;
-  gap: 0.75rem;
-  min-height: 72px;
   max-width: 100%;
-  margin-left: 0;
-  padding-left: 0;
-  padding-right: 0.5rem;
-  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
 }
 
 .navbar-brand img {
   display: block;
   height: auto;
   width: auto;
-  max-height: 64px;
   object-fit: contain;
   line-height: 0;
   vertical-align: middle;
 }
 
 .navbar-brand .south-university-logo {
-  width: clamp(104px, 12vw, 170px);
-  max-width: 170px;
-  max-height: 50px;
-  min-width: 0;
-  min-height: 0;
+  width: auto;
+  height: auto;
+  max-width: 220px;
+  max-height: 64px;
   display: block;
   object-fit: contain;
   background: transparent;
   flex-shrink: 0;
-  margin-left: 0.25rem;
-  position: relative;
-  left: 36px;
+  margin: 0;
+  position: static;
+  left: auto;
 }
 
 .navbar-brand .publisher-logo {
   height: auto;
-  max-height: 30px;
-  max-width: 130px;
+  max-height: 52px;
+  max-width: 220px;
   width: auto;
   object-fit: contain;
   flex-shrink: 0;
 }
-.brand-divider { height: 32px; width: 1px; background: rgba(6, 26, 61, 0.25); margin: 0; flex-shrink: 0; }
+
+.brand-divider {
+  height: 32px;
+  width: 1px;
+  background: rgba(6, 26, 61, 0.25);
+  margin: 0;
+  flex-shrink: 0;
+}
 .hero-tagline {
   margin: 0 0 0.5rem;
   color: rgba(255, 255, 255, 0.8);
@@ -641,19 +650,24 @@ h2.section-title {
 }
 
 @media (max-width: 767px) {
+  .navbar > .container-fluid {
+    padding-inline: 16px;
+  }
+
   .navbar-brand {
     gap: 0.75rem;
-    min-height: 56px;
+    min-height: 72px;
   }
 
   .navbar-brand .south-university-logo {
-    max-width: 220px;
-    max-height: 52px;
+    max-width: 150px;
+    max-height: 48px;
     width: auto;
   }
 
   .navbar-brand .publisher-logo {
-    max-height: 32px;
+    max-height: 34px;
+    max-width: 150px;
   }
 
   .hero-grid {
