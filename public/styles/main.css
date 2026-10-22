@@ -75,6 +75,8 @@ a:focus-visible {
   max-width: 100%;
   margin-left: 0;
   padding-left: 0;
+  padding-right: 0.5rem;
+  overflow: hidden;
 }
 
 .navbar-brand img {
@@ -97,7 +99,9 @@ a:focus-visible {
   object-fit: contain;
   background: transparent;
   flex-shrink: 0;
-  margin-left: 0;
+  margin-left: 0.25rem;
+  position: relative;
+  left: 36px;
 }
 
 .navbar-brand .publisher-logo {
@@ -108,7 +112,7 @@ a:focus-visible {
   object-fit: contain;
   flex-shrink: 0;
 }
-.brand-divider { height: 32px; width: 1px; background: rgba(6, 26, 61, 0.25); margin: 0; }
+.brand-divider { height: 32px; width: 1px; background: rgba(6, 26, 61, 0.25); margin: 0; flex-shrink: 0; }
 .hero-tagline {
   margin: 0 0 0.5rem;
   color: rgba(255, 255, 255, 0.8);
