@@ -212,6 +212,73 @@
     }
   }
 
+  const SOUTH_US_STATE_CODES = Object.freeze([
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA',
+    'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK',
+    'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'DC', 'WV', 'WI', 'WY', 'AA', 'AE', 'AP'
+  ]);
+
+  function normalizeLocationValue(value) {
+    return typeof value === 'string' ? value.trim() : '';
+  }
+
+  function isValidStreetAddress(value) {
+    const text = normalizeLocationValue(value);
+    if (!text || text.length < 4) return false;
+    if (!/^[A-Za-z0-9\s.,#/'-]+$/.test(text)) return false;
+    if (/(?:[.,#/'-]){3,}/.test(text) || /(?:\s){3,}/.test(text)) return false;
+    if (/https?:\/\/|www\./i.test(text) || /(?:[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})/i.test(text)) return false;
+    if (!/[A-Za-z]/.test(text) || !/[0-9]/.test(text)) return false;
+    const compact = text.replace(/[\s.,#/'-]+/g, '');
+    if (!/[A-Za-z]/.test(compact) || !/[0-9]/.test(compact)) return false;
+    if (/^(?:[A-Za-z]+|[0-9]+|[.,#/'-]+)$/i.test(text)) return false;
+    return true;
+  }
+
+  function isValidCity(value) {
+    const text = normalizeLocationValue(value);
+    if (!text || !/[A-Za-z]/.test(text)) return false;
+    if (!/^[A-Za-z][A-Za-z\s.'-]*$/.test(text)) return false;
+    if (/(?:[.'-]){2,}/.test(text) || /(?:\s){3,}/.test(text)) return false;
+    if (/https?:\/\/|www\./i.test(text) || /(?:[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})/i.test(text)) return false;
+    if (/[0-9]/.test(text)) return false;
+    return true;
+  }
+
+  function isValidStateCode(value) {
+    const text = normalizeLocationValue(value).toUpperCase();
+    return SOUTH_US_STATE_CODES.includes(text);
+  }
+
+  function isValidZipCode(value) {
+    return /^\d{5}$/.test(normalizeLocationValue(value));
+  }
+
+  function trimLocationFields() {
+    const addressVisible = document.getElementById('lead_address_address_visible');
+    const addressHidden = document.getElementById('lead_address_address');
+    const city = document.getElementById('lead_address_city');
+    const state = document.getElementById('lead_address_state');
+    const zip = document.getElementById('lead_address_zip');
+
+    if (addressVisible) {
+      const value = normalizeLocationValue(addressVisible.value);
+      addressVisible.value = value;
+      if (addressHidden) addressHidden.value = value;
+    }
+    if (city) city.value = normalizeLocationValue(city.value);
+    if (state) state.value = normalizeLocationValue(state.value).toUpperCase();
+    if (zip) zip.value = normalizeLocationValue(zip.value);
+  }
+
+  window.SOUTH_ADDRESS_VALIDATION = Object.freeze({
+    isValidStreetAddress,
+    isValidCity,
+    isValidStateCode,
+    isValidZipCode,
+    trimLocationFields
+  });
+
   function validateStepOne() {
     const field = document.getElementById('lead_education_program_id');
     if (field && field.value) {
@@ -225,26 +292,30 @@
 
   function validateStepTwo() {
     const checks = [
-      ['lead_education_grad_year', 'Please select your graduation year.', 'grad-year-error'],
-      ['lead_education_education_level_id', 'Please select your highest level of education.', 'education-error'],
-      ['lead_address_address_visible', 'Please enter your street address.', 'addressValidationMessage'],
-      ['lead_address_city', 'Please enter your city.', null],
-      ['lead_address_state', 'Please select your state.', null],
-      ['lead_address_zip', 'Please enter a valid 5-digit ZIP code.', null]
+      ['lead_education_grad_year', 'Please select your graduation year.', 'grad-year-error', function (value) {
+        return Boolean(window.SOUTH_GRADUATION_YEARS && window.SOUTH_GRADUATION_YEARS.isValid(value));
+      }],
+      ['lead_education_education_level_id', 'Please select your highest level of education.', 'education-error', function (value) { return Boolean(value); }],
+      ['lead_address_address_visible', 'Please enter a valid street address', 'addressValidationMessage', isValidStreetAddress],
+      ['lead_address_city', 'Please enter a valid city', 'city-error', isValidCity],
+      ['lead_address_state', 'Please select your state.', 'state-error', isValidStateCode],
+      ['lead_address_zip', 'Please enter a valid 5-digit ZIP code', 'zip-error', isValidZipCode]
     ];
     for (const check of checks) {
       const field = document.getElementById(check[0]);
-      const value = field ? String(field.value || '').trim() : '';
-      const valid = check[0] === 'lead_education_grad_year' ?
-        Boolean(window.SOUTH_GRADUATION_YEARS && window.SOUTH_GRADUATION_YEARS.isValid(value)) :
-        value && (check[0] !== 'lead_address_zip' || /^\d{5}$/.test(value));
+      const value = field ? normalizeLocationValue(field.value) : '';
+      const valid = check[3] ? check[3](value) : Boolean(value);
       if (!valid) {
         if (check[2]) setError(check[2], check[1]);
         if (field) field.focus();
         return false;
       }
       if (check[2]) setError(check[2], '');
+      if (field && ['lead_address_address_visible', 'lead_address_city', 'lead_address_zip'].includes(field.id)) {
+        field.value = value;
+      }
     }
+    trimLocationFields();
     return true;
   }
 
@@ -284,7 +355,15 @@
     const visible = document.getElementById('lead_address_address_visible');
     const hidden = document.getElementById('lead_address_address');
     if (!visible || !hidden) return;
-    visible.addEventListener('input', function () { hidden.value = visible.value; });
+    visible.addEventListener('input', function () {
+      hidden.value = visible.value;
+      const text = normalizeLocationValue(visible.value);
+      if (text && isValidStreetAddress(text)) {
+        setError('addressValidationMessage', '');
+      } else if (text) {
+        setError('addressValidationMessage', 'Please enter a valid street address');
+      }
+    });
   }
 
   function wireNavigation() {
@@ -313,6 +392,7 @@
       updateStep(2);
       return;
     }
+    trimLocationFields();
     if (!validateStepThree()) return;
 
     const leadIdField = document.getElementById('leadid_token');
@@ -439,6 +519,17 @@
     restoreSubmissionState();
     captureAttribution();
     setAddressValue();
+    ['lead_address_city', 'lead_address_state', 'lead_address_zip'].forEach(function (fieldId) {
+      const field = document.getElementById(fieldId);
+      if (!field) return;
+      const errorId = fieldId === 'lead_address_city' ? 'city-error' : fieldId === 'lead_address_state' ? 'state-error' : 'zip-error';
+      field.addEventListener('input', function () {
+        const value = normalizeLocationValue(field.value);
+        const valid = fieldId === 'lead_address_city' ? isValidCity(value) : fieldId === 'lead_address_state' ? isValidStateCode(value) : isValidZipCode(value);
+        if (value && valid) setError(errorId, '');
+        if (fieldId === 'lead_address_state' && !value) setError(errorId, 'Please select your state.');
+      });
+    });
     if (window.SOUTH_GRADUATION_YEARS) {
       window.SOUTH_GRADUATION_YEARS.populateSelect(document.getElementById('lead_education_grad_year'));
     }

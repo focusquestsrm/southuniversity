@@ -36,6 +36,64 @@ function validSubmissionId(value) {
   return /^[A-Za-z0-9][A-Za-z0-9_-]{15,127}$/.test(String(value || ''));
 }
 
+const VALID_STATE_CODES = Object.freeze([
+  'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA',
+  'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK',
+  'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'DC', 'WV', 'WI', 'WY', 'AA', 'AE', 'AP'
+]);
+
+function normalizeLocationValue(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function isValidStreetAddress(value) {
+  const text = normalizeLocationValue(value);
+  if (!text || text.length < 4) return false;
+  if (!/^[A-Za-z0-9\s.,#/'-]+$/.test(text)) return false;
+  if (/(?:[.,#/'-]){3,}/.test(text) || /(?:\s){3,}/.test(text)) return false;
+  if (/https?:\/\/|www\./i.test(text) || /(?:[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})/i.test(text)) return false;
+  if (!/[A-Za-z]/.test(text) || !/[0-9]/.test(text)) return false;
+  const compact = text.replace(/[\s.,#/'-]+/g, '');
+  if (!/[A-Za-z]/.test(compact) || !/[0-9]/.test(compact)) return false;
+  if (/^(?:[A-Za-z]+|[0-9]+|[.,#/'-]+)$/i.test(text)) return false;
+  return true;
+}
+
+function isValidCity(value) {
+  const text = normalizeLocationValue(value);
+  if (!text || !/[A-Za-z]/.test(text)) return false;
+  if (!/^[A-Za-z][A-Za-z\s.'-]*$/.test(text)) return false;
+  if (/(?:[.'-]){2,}/.test(text) || /(?:\s){3,}/.test(text)) return false;
+  if (/https?:\/\/|www\./i.test(text) || /(?:[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})/i.test(text)) return false;
+  if (/[0-9]/.test(text)) return false;
+  return true;
+}
+
+function isValidStateCode(value) {
+  return VALID_STATE_CODES.includes(String(normalizeLocationValue(value) || '').toUpperCase());
+}
+
+function isValidZipCode(value) {
+  return /^\d{5}$/.test(normalizeLocationValue(value));
+}
+
+function validateAddressValues(lead) {
+  const address = normalizeLocationValue(lead['lead_address[address]']);
+  if (!isValidStreetAddress(address)) return 'Please enter a valid street address';
+  const city = normalizeLocationValue(lead['lead_address[city]']);
+  if (!isValidCity(city)) return 'Please enter a valid city';
+  const state = normalizeLocationValue(lead['lead_address[state]']).toUpperCase();
+  if (!isValidStateCode(state)) return 'Please select your state.';
+  const zip = normalizeLocationValue(lead['lead_address[zip]']);
+  if (!isValidZipCode(zip)) return 'Please enter a valid 5-digit ZIP code';
+
+  lead['lead_address[address]'] = address;
+  lead['lead_address[city]'] = city;
+  lead['lead_address[state]'] = state;
+  lead['lead_address[zip]'] = zip;
+  return null;
+}
+
 function submissionKey(submissionId) {
   return 'submission:' + crypto.createHash('sha256').update(submissionId).digest('hex');
 }
@@ -149,9 +207,12 @@ exports.handler = async function handler(event) {
   if (!leadId) {
     return response(400, { outcome: 'unavailable', retryable: true, error: 'Your session is still preparing your lead identification. Please wait a moment and try again.' });
   }
-  if (!/^\d{5}$/.test(String(lead['lead_address[zip]'] || ''))) {
-    return response(400, { outcome: 'unavailable', retryable: true, error: 'A valid ZIP code is required.' });
+
+  const addressValidationError = validateAddressValues(lead);
+  if (addressValidationError) {
+    return response(400, { outcome: 'unavailable', retryable: true, error: addressValidationError });
   }
+
   const normalizedPhone = normalizePhoneValue(String(lead['lead[phone1]'] || ''));
   if (normalizedPhone === null) {
     return response(400, { outcome: 'unavailable', retryable: true, error: 'A valid phone number is required.' });
@@ -219,4 +280,13 @@ exports.handler = async function handler(event) {
     await completeSubmission(store, reservation, 'ambiguous', { outcome: 'unavailable', retryable: false });
     return response(502, { outcome: 'unavailable', retryable: false });
   }
+};
+
+module.exports = {
+  isValidStreetAddress,
+  isValidCity,
+  isValidStateCode,
+  isValidZipCode,
+  validateAddressValues,
+  handler: exports.handler
 };

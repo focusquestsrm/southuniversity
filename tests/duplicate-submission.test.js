@@ -50,9 +50,13 @@ function buildHarness({ fetchImplementation, sessionStorage, overrides = {} }) {
   field('lead_education_education_level_id', 'lead_education[education_level_id]', '1302');
   field('lead_address_address_visible', 'lead_address[address]', '123 Test Street');
   field('lead_address_address', 'lead_address[address]', '123 Test Street');
+  field('addressValidationMessage', '', '');
   field('lead_address_city', 'lead_address[city]', 'Tampa');
   field('lead_address_state', 'lead_address[state]', 'FL');
   field('lead_address_zip', 'lead_address[zip]', '33601');
+  field('city-error', '', '');
+  field('state-error', '', '');
+  field('zip-error', '', '');
   field('lead_firstname', 'lead[firstname]', 'Browser');
   field('lead_lastname', 'lead[lastname]', 'Review');
   field('lead_email', 'lead[email]', 'browser.review@example.invalid');
@@ -164,6 +168,8 @@ function makeBaseLead() {
     submission_id: 'same-submission-id-123456',
     'lead_education[program_id]': '114281',
     'lead_education[grad_year]': '2027',
+    'lead_address[address]': '123 Test Street',
+    'lead_address[city]': 'Tampa',
     'lead_address[state]': 'FL',
     'lead_address[zip]': '33601',
     'lead[email]': 'test@example.com',
@@ -174,6 +180,197 @@ function makeBaseLead() {
     'lead_consent[tcpa_consent]': 'Y'
   }).toString();
 }
+
+test('address validation accepts supported formats and rejects invalid data', () => {
+  const addressModule = require('../netlify/functions/submit-lead.js');
+
+  const validStreetAddresses = [
+    '123 Main St',
+    '456 Oak Ave Apt 8B',
+    '987 Pine Rd, Unit 4',
+    '1000 Market St Suite 200',
+    '10 Highway 18',
+    'Route 66',
+    'P.O. Box 1234',
+    'PO Box 4567',
+    '12 Building C, 5th Ave',
+    "18 O'Fallon Ave"
+  ];
+  for (const value of validStreetAddresses) {
+    assert.strictEqual(addressModule.isValidStreetAddress(value), true, `Expected ${value} to be accepted`);
+  }
+
+  const invalidStreetAddresses = [
+    '123',
+    'Main Street',
+    '123 <script>alert(1)</script>',
+    'https://example.com',
+    'user@example.com',
+    '!!!',
+    '---',
+    'ABC DEF GHI'
+  ];
+  for (const value of invalidStreetAddresses) {
+    assert.strictEqual(addressModule.isValidStreetAddress(value), false, `Expected ${value} to be rejected`);
+  }
+
+  const validCities = ['St. Louis', 'Winston-Salem', "O'Fallon", 'San Diego', 'Boca Raton'];
+  for (const value of validCities) {
+    assert.strictEqual(addressModule.isValidCity(value), true, `Expected ${value} to be accepted as a city`);
+  }
+
+  const invalidCities = ['123 Main', 'St. Louis!', 'https://city.example', 'user@example.com', '--------', 'San Diego 123'];
+  for (const value of invalidCities) {
+    assert.strictEqual(addressModule.isValidCity(value), false, `Expected ${value} to be rejected as a city`);
+  }
+
+  assert.strictEqual(addressModule.isValidZipCode('12345'), true, 'Five-digit ZIP should pass');
+  for (const value of ['1234', '123456', '1234A', '12 345', '1234-5', '12345.', '']) {
+    assert.strictEqual(addressModule.isValidZipCode(value), false, `Expected ${value} to be rejected as ZIP`);
+  }
+});
+
+test('browser invalid address values never fetch and preserve the raw values', async () => {
+  const invalidCases = [
+    { field: 'lead_address_address_visible', value: '<script>alert(1)</script>', errorId: 'addressValidationMessage', message: 'Please enter a valid street address' },
+    { field: 'lead_address_city', value: 'Miami123', errorId: 'city-error', message: 'Please enter a valid city' },
+    { field: 'lead_address_state', value: 'ZZ', errorId: 'state-error', message: 'Please select your state.' },
+    { field: 'lead_address_zip', value: '123456', errorId: 'zip-error', message: 'Please enter a valid 5-digit ZIP code' }
+  ];
+
+  for (const invalidCase of invalidCases) {
+    let fetchCalls = 0;
+    const harness = buildHarness({
+      sessionStorage: storage(),
+      fetchImplementation: async () => {
+        fetchCalls += 1;
+        return { ok: true, json: async () => ({ outcome: 'accepted', location: '/thank-you/' }) };
+      }
+    });
+
+    const field = harness.fields[invalidCase.field];
+    field.value = invalidCase.value;
+    await harness.submit();
+
+    assert.strictEqual(fetchCalls, 0, `Expected ${invalidCase.field} to block outbound fetches`);
+    assert.strictEqual(harness.fields[invalidCase.errorId].textContent, invalidCase.message, `Expected ${invalidCase.field} to show the correct validation message`);
+    assert.strictEqual(field.value, invalidCase.value, `Expected ${invalidCase.field} to retain the original value until validation`);
+  }
+});
+
+test('server invalid address values block pre-pings, LeadHoop requests, and reservations', async () => {
+  const invalidCases = [
+    { label: 'street', body: { 'lead_address[address]': '123', 'lead_address[city]': 'Tampa', 'lead_address[state]': 'FL', 'lead_address[zip]': '33601' }, error: 'Please enter a valid street address' },
+    { label: 'city', body: { 'lead_address[address]': '123 Test Street', 'lead_address[city]': 'Tampa123', 'lead_address[state]': 'FL', 'lead_address[zip]': '33601' }, error: 'Please enter a valid city' },
+    { label: 'zip', body: { 'lead_address[address]': '123 Test Street', 'lead_address[city]': 'Tampa', 'lead_address[state]': 'FL', 'lead_address[zip]': '123456' }, error: 'Please enter a valid 5-digit ZIP code' }
+  ];
+
+  const originalSubmissionFlag = process.env.LEAD_SUBMISSION_ENABLED;
+  process.env.LEAD_SUBMISSION_ENABLED = 'true';
+  try {
+    for (const invalidCase of invalidCases) {
+      let reservationCalls = 0;
+      let prePingCalls = 0;
+      let leadHoopCalls = 0;
+
+      await withBlobStore(() => ({
+        setJSON: async () => {
+          reservationCalls += 1;
+          return { modified: true, etag: 'etag-reservation' };
+        },
+        getWithMetadata: async () => null
+      }), async (handler) => {
+        global.fetch = async (url) => {
+          const target = String(url || '');
+          if (target.includes('/v1/pings')) prePingCalls += 1;
+          if (target.includes('/incoming/leads')) leadHoopCalls += 1;
+          return { ok: true, json: async () => ({ ping_id: 'ping-123' }) };
+        };
+
+        const result = await handler({
+          httpMethod: 'POST',
+          headers: { host: 'example.com', origin: 'https://example.com', 'x-nf-request-id': `server-invalid-${invalidCase.label}` },
+          body: new URLSearchParams({
+            submission_id: 'same-submission-id-123456',
+            'lead_education[program_id]': '114281',
+            'lead_education[grad_year]': '2027',
+            'lead_address[address]': invalidCase.body['lead_address[address]'],
+            'lead_address[city]': invalidCase.body['lead_address[city]'],
+            'lead_address[state]': invalidCase.body['lead_address[state]'],
+            'lead_address[zip]': invalidCase.body['lead_address[zip]'],
+            'lead[email]': 'test@example.com',
+            'lead[phone1]': '2125550100',
+            'lead[service_leadid]': 'leadid-test-123',
+            'lead[firstname]': 'Concurrent',
+            'lead[lastname]': 'Request',
+            'lead_consent[tcpa_consent]': 'Y'
+          }).toString()
+        });
+
+        assert.strictEqual(result.statusCode, 400, `Expected invalid ${invalidCase.label} to be rejected`);
+        assert.strictEqual(JSON.parse(result.body).error, invalidCase.error, `Unexpected error for invalid ${invalidCase.label}`);
+        assert.strictEqual(reservationCalls, 0, `Expected zero reservation calls for invalid ${invalidCase.label}`);
+        assert.strictEqual(prePingCalls, 0, `Expected zero pre-ping calls for invalid ${invalidCase.label}`);
+        assert.strictEqual(leadHoopCalls, 0, `Expected zero final LeadHoop calls for invalid ${invalidCase.label}`);
+      });
+    }
+  } finally {
+    if (originalSubmissionFlag === undefined) delete process.env.LEAD_SUBMISSION_ENABLED; else process.env.LEAD_SUBMISSION_ENABLED = originalSubmissionFlag;
+  }
+});
+
+test('valid trimmed address values map correctly to the outbound LeadHoop payload', async () => {
+  const originalSubmissionFlag = process.env.LEAD_SUBMISSION_ENABLED;
+  process.env.LEAD_SUBMISSION_ENABLED = 'true';
+  try {
+    await withBlobStore(() => ({
+      setJSON: async () => ({ modified: true, etag: 'etag-owner' }),
+      getWithMetadata: async () => null
+    }), async (handler) => {
+      let leadPayload = null;
+
+      global.fetch = async (url, options) => {
+        const target = String(url || '');
+        if (target.includes('/v1/pings')) {
+          return { ok: true, json: async () => ({ ping_id: 'ping-123' }) };
+        }
+        if (target.includes('/incoming/leads')) {
+          leadPayload = new URLSearchParams(options.body);
+          return { ok: true, json: async () => ({}) };
+        }
+        throw new Error(`Unexpected URL: ${target}`);
+      };
+
+      const result = await handler({
+        httpMethod: 'POST',
+        headers: { host: 'example.com', origin: 'https://example.com', 'x-nf-request-id': 'payload-trim' },
+        body: new URLSearchParams({
+          submission_id: 'same-submission-id-123456',
+          'lead_education[program_id]': '114281',
+          'lead_education[grad_year]': '2027',
+          'lead_address[address]': '  123 Test Street  ',
+          'lead_address[city]': '  St. Louis  ',
+          'lead_address[state]': ' fl ',
+          'lead_address[zip]': ' 33601 ',
+          'lead[email]': 'test@example.com',
+          'lead[phone1]': '2125550100',
+          'lead[service_leadid]': 'leadid-test-123',
+          'lead[firstname]': 'Concurrent',
+          'lead[lastname]': 'Request',
+          'lead_consent[tcpa_consent]': 'Y'
+        }).toString()
+      });
+
+      assert.strictEqual(result.statusCode, 200, 'Valid trimmed address values should be accepted');
+      assert.strictEqual(leadPayload.get('lead_address[address]'), '123 Test Street', 'Address payload should trim leading and trailing whitespace');
+      assert.strictEqual(leadPayload.get('lead_address[city]'), 'St. Louis', 'City payload should trim leading and trailing whitespace');
+      assert.strictEqual(leadPayload.get('lead_address[state]'), 'FL', 'State payload should normalize to uppercase');
+      assert.strictEqual(leadPayload.get('lead_address[zip]'), '33601', 'ZIP payload should trim leading and trailing whitespace');
+    });
+  } finally {
+    if (originalSubmissionFlag === undefined) delete process.env.LEAD_SUBMISSION_ENABLED; else process.env.LEAD_SUBMISSION_ENABLED = originalSubmissionFlag;
+  }
+});
 
 test('phone normalization accepts all valid formats and rejects invalid values', async () => {
   const source = fs.readFileSync(path.join(__dirname, '../public/js/function2.js'), 'utf8');
@@ -272,6 +469,8 @@ test('phone normalization accepts all valid formats and rejects invalid values',
           submission_id: 'same-submission-id-123456',
           'lead_education[program_id]': '114281',
           'lead_education[grad_year]': '2027',
+          'lead_address[address]': '123 Test Street',
+          'lead_address[city]': 'Tampa',
           'lead_address[state]': 'FL',
           'lead_address[zip]': '33601',
           'lead[email]': 'test@example.com',

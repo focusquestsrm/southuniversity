@@ -166,6 +166,7 @@
                     <div class="col-md-4">
                       <label for="lead_address_city" class="form-label">City*</label>
                       <input id="lead_address_city" name="lead_address[city]" type="text" class="form-control" autocomplete="address-level2" required />
+                      <span class="error-message" id="city-error" aria-live="polite"></span>
                     </div>
                     <div class="col-md-4">
                       <label for="lead_address_state" class="form-label">State*</label>
@@ -227,10 +228,12 @@
                         <option value="WI">Wisconsin</option>
                         <option value="WY">Wyoming</option>
                       </select>
+                      <span class="error-message" id="state-error" aria-live="polite"></span>
                     </div>
                     <div class="col-md-4">
                       <label for="lead_address_zip" class="form-label">Zipcode*</label>
                       <input id="lead_address_zip" name="lead_address[zip]" type="text" class="form-control" autocomplete="postal-code" inputmode="numeric" required pattern="\d{5}" />
+                      <span class="error-message" id="zip-error" aria-live="polite"></span>
                     </div>
                   </div>
 
