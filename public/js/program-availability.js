@@ -2,17 +2,17 @@
   'use strict';
 
   const approvedPrograms = [
-    ['114280', 'Allied Health Science'],
-    ['114276', 'Medical Assisting'],
-    ['114278', 'Paralegal Studies'],
-    ['114281', 'Psychology'],
-    ['114282', 'Business Administration'],
-    ['114283', 'Accounting'],
-    ['114284', 'Criminal Justice'],
-    ['114286', 'Healthcare Management'],
-    ['114266', 'Information Technology'],
-    ['114273', 'Legal Studies'],
-    ['114268', 'Public Health']
+    ['114280', 'Allied Health Science (AS)'],
+    ['114276', 'Medical Assisting (AS)'],
+    ['114278', 'Paralegal Studies (AS)'],
+    ['114281', 'Psychology (BA)'],
+    ['114282', 'Business Administration (BBA)'],
+    ['114283', 'Accounting (BS)'],
+    ['114284', 'Criminal Justice (BS)'],
+    ['114286', 'Healthcare Management (BS)'],
+    ['114266', 'Information Technology (BS)'],
+    ['114273', 'Legal Studies (BS)'],
+    ['114268', 'Public Health (BS)']
   ].map(function (entry, index) {
     return { program_id: entry[0], program_name: entry[1], active: true, display_order: index + 1 };
   });

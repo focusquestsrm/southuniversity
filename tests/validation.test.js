@@ -281,8 +281,8 @@ test('Campaign includes 11 approved South University programs without degree abb
 });
 
 test('Public page reflects the approved South University degree-program wording and no campaign number', () => {
-    assert(pageHtml.includes('Discover South University’s Online Degree Programs'), 'Page should include the approved South University discovery heading');
-    assert(pageHtml.includes('Explore South University’s Online Programs'), 'Page should include the approved South University online programs heading');
+    assert(pageHtml.includes('Discover South University’s Online Degree Options'), 'Page should include the approved South University discovery heading');
+    assert(pageHtml.includes('South University’s online programs'), 'Footer should say South University’s online programs');
     assert(pageHtml.includes('Powered by Launch Your Degree'), 'Footer should say Powered by Launch Your Degree');
     assert(!pageHtml.includes('Campaign #12211'), 'Campaign number should be absent from public page');
     assert(!pageHtml.includes('Back2Learn'), 'Back2Learn text should not appear on public page');
